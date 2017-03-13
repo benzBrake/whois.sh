@@ -12,7 +12,7 @@ SERVER=$(eval echo '$'$TLD)
 test -z "$SERVER" && {
 	RESULT=$(curl -s "https://www.iana.org/whois?q=$DOMAIN")
 	SERVER=$(echo "$RESULT" | grep "whois:" | sed 's#.* ##')
-	echo "$TLD=$SERVER" >> "$WHOIS_WORKING_DIR/servers.list"
+	! test -z "$SERVER" && { echo "$TLD=$SERVER" >> "$WHOIS_WORKING_DIR/servers.list"; }
 }
 REG_URL=$(echo "$RESULT" | grep remarks | grep http | sed 's#.* ##')
 if [ -z "$SERVER" ]; then
