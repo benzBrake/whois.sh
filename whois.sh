@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 ARGUMENT="$1"
 test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
+test -z "$ARGUMENT" && { echo "Arguments Error."; exit 1;}
 function prep ()
 {
 	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
