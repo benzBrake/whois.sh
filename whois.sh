@@ -34,10 +34,10 @@ DOMAIN=$(echo "$ARGUMENT" | sed 's#.*http.*//##;s#/.*##')
 				RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
 			else
 				# NON WEB WHOIS
-				PRE_ARGUMENT=""
-				! test -z "$HOST" && PRE_ARGUMENT="$PRE_ARGUMENT -h $HOST"
-				! test -z "$PORT" && PRE_ARGUMENT="$PRE_ARGUMENT -p $PORT"
-				RESULT=$(whois "$PRE_ARGUMENT $DOMAIN")
+				RESULT=$(whois "$DOMAIN")
+				if [ $? -ne 0 ]; then
+					RESULT=$("${WHOIS_WORKING_DIR}/api/getwhois.sh" "$DOMAIN")
+				fi
 				echo "$RESULT" | grep -i "no whois server" > /dev/null
 				if [ $? -eq 0 ]; then
 					RESULT=$("${WHOIS_WORKING_DIR}/api/getwhois.sh" "$DOMAIN")
