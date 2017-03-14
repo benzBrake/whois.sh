@@ -18,5 +18,5 @@ TEMP=$(echo "$RESULT" | grep available)
 if [ ! -z "$TEMP" ]; then
 	echo "The domain name $DOMAIN.$TLD is available."
 else
-	echo $RESULT | sed 's#<br />#\n#g;s#<[^<>]*>##g;s#&nbsp;##g'
+	echo $RESULT | sed 's#<br />#\n#g;s#<script[^<>]*>[^<>]*</script>##g;s#<[^<>]*>##g;s#&nbsp;##g'
 fi
