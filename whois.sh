@@ -32,7 +32,7 @@ fi
 		"$WHOIS" "$DOMAIN"
 	else
 		if [ "$HOST" != "" ] && [ "$PORT" != "" ]; then
-			"$WHOIS" -H $HOST -P $PORT $DOMAIN
+			"$WHOIS" -h $HOST -p $PORT $DOMAIN
 		else
 			TLD=$(echo $DOMAIN | sed 's#.*\.##')
 			if [ -e "${WHOIS_WORKING_DIR}/api/${TLD}.sh" ]; then
@@ -42,7 +42,7 @@ fi
 				# NON WEB WHOIS
 				RESULT=$("$WHOIS" "$DOMAIN")
 				if [ $? -ne 0 ]; then
-					RESULT=$("$WHOIS" "$DOMAIN")
+					RESULT=$("${WHOIS_WORKING_DIR}/api/getwhois.sh" "$DOMAIN")
 				fi
 				echo "$RESULT" | grep -i "no whois server" > /dev/null
 				test $? -eq 0 && test "$WHOIS" == "whois" && {
