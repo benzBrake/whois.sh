@@ -19,6 +19,7 @@ echo '. "/root/.whois.sh/whois.sh.env"' >> /root/.bashrc
 ### How to whois
 ```
 whois.sh domain
+whois.sh -iana tld
 ```
 ## License
 
