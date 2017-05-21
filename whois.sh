@@ -48,6 +48,10 @@ fi
 				test $? -eq 0 && test "$WHOIS" == "whois" && {
 					RESULT=$("${WHOIS_WORKING_DIR}/api/getwhois.sh" "$DOMAIN")
 				}
+				echo "$RESULT" | grep -i 'with "xxx"' > /dev/null
+				test $? -eq 0 && {
+					RESULT=$("$WHOIS" "domain $DOMAIN")
+				}
 			fi
 		fi
 		echo "$RESULT"
