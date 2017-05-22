@@ -1,7 +1,7 @@
 # whois.sh
 An extended whois client written by shell.
 
-Base on command whois. Please install whois before using whois.sh.
+~~Base on command whois. Please install whois before using whois.sh.~~
 
 ## Features
 If the whois command was returned no whois server, whois.sh would connet to iana.org and checkout the whois server automatic.
