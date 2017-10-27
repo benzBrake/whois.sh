@@ -11,10 +11,10 @@ If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD
 ## Uasage
 ### Install
 ```
-cd /root
+cd ~
 git clone https://github.com/benzBrake/whois.sh.git .whois.sh
-chmod +x /root/.whois.sh/*.sh /root/.whois.sh/api/*.sh
-echo '. "/root/.whois.sh/whois.sh.env"' >> /root/.bashrc
+chmod +x ~/.whois.sh/*.sh ~/.whois.sh/api/*.sh
+echo '. ~/.whois.sh/whois.sh.env' >> ~/.bashrc
 ```
 ### How to whois
 ```
