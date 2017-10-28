@@ -15,10 +15,16 @@ cd ~
 git clone https://github.com/benzBrake/whois.sh.git .whois.sh
 chmod +x ~/.whois.sh/*.sh ~/.whois.sh/api/*.sh
 echo '. ~/.whois.sh/whois.sh.env' >> ~/.bashrc
+exec $SHELL
 ```
 ### How to whois
 ```
 whois.sh domain
+whois.sh ip
+```
+or
+```
+whois.sh -H whois.doufu.ru doufu.ru
 ```
 ## License
 
