@@ -72,8 +72,8 @@ fi
 		test $? -eq 0 && test "$WHOIS" == "whois" && {
 			RESULT=$("${WHOIS_WORKING_DIR}/api/getwhois.sh" "$DOMAIN")
 		}
-		echo "$RESULT" | grep -i "no whois server" > /dev/null
 		TLD=$(echo $DOMAIN | sed 's#.*\.##')
+		echo "$RESULT" | grep -i "no whois server" > /dev/null
 		test $? -eq 0 && test -e "${WHOIS_WORKING_DIR}/api/${TLD}.sh" && {
 			# WEB WHOIS
 			RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
