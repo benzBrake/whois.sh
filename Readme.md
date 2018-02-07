@@ -8,7 +8,7 @@ If the whois command was returned no whois server, whois.sh would connet to iana
 
 If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD.sh` in api folder, if exist, call `TLD.sh` to get whois info.
 
-## Uasage
+## Usage
 ### Install
 ```
 cd ~
