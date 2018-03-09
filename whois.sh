@@ -50,11 +50,11 @@ DOMAIN=$(echo "$DOMAIN" | sed 's#.*http.*//##;s#/.*##')
 if [ -n "$(command -v whois)" ]; then
 	WHOIS="whois"
 else
-	WHOIS="$WHOIS_WORKING_DIR/api/getwhois.sh"
+	WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 fi
 ! test -z "$DOMAIN" && {
 	if [[ "$IP" == "$DOMAIN" ]]; then
-		"$WHOIS_WORKING_DIR/api/ip.sh" "$DOMAIN"
+		"$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
 	else
 		test -z "$PORT" && {
 			PORT=43
@@ -70,7 +70,7 @@ fi
 		}
 		echo "$RESULT" | grep -i "no whois server" > /dev/null
 		test $? -eq 0 && test "$WHOIS" == "whois" && {
-			RESULT=$("${WHOIS_WORKING_DIR}/api/getwhois.sh" "$DOMAIN")
+			RESULT=$("${WHOIS_WORKING_DIR}/inc/getwhois.sh" "$DOMAIN")
 		}
 		TLD=$(echo $DOMAIN | sed 's#.*\.##')
 		echo "$RESULT" | grep -i "no whois server" > /dev/null

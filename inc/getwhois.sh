@@ -35,7 +35,7 @@ test -z "$SERVER" && {
 }
 
 if [ ! -z "$SERVER" ]; then
-	RESULT=$($WHOIS_WORKING_DIR/api/tcp.sh -host $SERVER -port $PORT -data $DOMAIN)
+	RESULT=$($WHOIS_WORKING_DIR/inc/tcp.sh -host $SERVER -port $PORT -data $DOMAIN)
 	echo "$RESULT"
 else
 	echo -e "This TLD has no whois server, but you can access the whois database at\n$REG_URL"
