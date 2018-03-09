@@ -11,9 +11,11 @@ If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD
 ## Usage
 ### Install
 ```
+yum install git curl -y # CentOS/RHEL
+apt install git curl -y # Debian/Ubuntu/WSL
 cd ~
 git clone https://github.com/benzBrake/whois.sh.git .whois.sh
-chmod +x ~/.whois.sh/*.sh ~/.whois.sh/api/*.sh
+chmod +x ~/.whois.sh/*.sh ~/.whois.sh/*/*.sh
 echo '. ~/.whois.sh/whois.sh.env' >> ~/.bashrc
 exec $SHELL
 ```
