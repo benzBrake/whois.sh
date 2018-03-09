@@ -47,11 +47,7 @@ function prep ()
 }
 IP=$(prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
 DOMAIN=$(echo "$DOMAIN" | sed 's#.*http.*//##;s#/.*##')
-if [ -n "$(command -v whois)" ]; then
-	WHOIS="whois"
-else
-	WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
-fi
+WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 ! test -z "$DOMAIN" && {
 	if [[ "$IP" == "$DOMAIN" ]]; then
 		"$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
@@ -60,24 +56,24 @@ fi
 			PORT=43
 		}
 		if [ -z "$SERVER" ]; then
-			RESULT=$("$WHOIS" $DOMAIN)
+			# Built-in whois order
+			TLD=$(echo $DOMAIN | sed 's#.*\.##')
+			if [ -e "${WHOIS_WORKING_DIR}/api/${TLD}.sh" ]; then
+				# Api first
+				RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
+			else
+				RESULT=$("$WHOIS" $DOMAIN)
+				# .com whois hack
+				echo "$RESULT" | grep -i 'with "xxx"' > /dev/null
+				test $? -eq 0 && {
+					RESULT=$("$WHOIS" "domain $DOMAIN")
+				}
+			fi
 		else
+			# Specify whois server
 			RESULT=$("$WHOIS" -h $SERVER -p $PORT $DOMAIN)
+			echo "$RESULT"
 		fi
-		echo "$RESULT" | grep -i 'with "xxx"' > /dev/null
-		test $? -eq 0 && {
-			RESULT=$("$WHOIS" "domain $DOMAIN")
-		}
-		echo "$RESULT" | grep -i "no whois server" > /dev/null
-		test $? -eq 0 && test "$WHOIS" == "whois" && {
-			RESULT=$("${WHOIS_WORKING_DIR}/inc/getwhois.sh" "$DOMAIN")
-		}
-		TLD=$(echo $DOMAIN | sed 's#.*\.##')
-		echo "$RESULT" | grep -i "no whois server" > /dev/null
-		test $? -eq 0 && test -e "${WHOIS_WORKING_DIR}/api/${TLD}.sh" && {
-			# WEB WHOIS
-			RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
-		}
-		echo "$RESULT"
 	fi
+	echo "$RESULT"
 }

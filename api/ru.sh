@@ -18,4 +18,4 @@ else
 	[[ $SLD == "pp" ]] && SERVER=whois.nic.ru
 	[[ $SLD == "sochi" ]] && SERVER=whois.nic.ru
 fi
-$WHOIS_WORKING_DIR/api/tcp.sh -host $SERVER -port 43 -data $DOMAIN
+$WHOIS_WORKING_DIR/inc/tcp.sh -host $SERVER -port 43 -data $DOMAIN
