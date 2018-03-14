@@ -24,6 +24,11 @@ test -z "$SERVER" && {
 		. "$WHOIS_WORKING_DIR/servers.list"
 	fi
 	SERVER=$(eval echo '$'$TLD)
+	# Skip illigle domain
+	if [[ "$SERVER" == "illigle" ]]; then
+		echo "Domain is illigle."
+		exit 1
+	fi
 	# Get whois server from iana
 	test -z "$SERVER" && {
 		RESULT=$(curl -s "https://www.iana.org/whois?q=$DOMAIN")
@@ -39,6 +44,7 @@ if [ ! -z "$SERVER" ]; then
 	echo "$RESULT"
 else
 	if [[ -z "$REG_URL" ]]; then
+		echo "$TLD=illigle" >> "$WHOIS_WORKING_DIR/servers.list";
 		echo "Domain is illigle."
 	else
 		echo -e "This TLD has no whois server, but you can access the whois database at\n$REG_URL"
