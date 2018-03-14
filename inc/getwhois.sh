@@ -38,5 +38,9 @@ if [ ! -z "$SERVER" ]; then
 	RESULT=$($WHOIS_WORKING_DIR/inc/tcp.sh -host $SERVER -port $PORT -data $DOMAIN)
 	echo "$RESULT"
 else
-	echo -e "This TLD has no whois server, but you can access the whois database at\n$REG_URL"
+	if [[ -z "$REG_URL" ]]; then
+		echo "Domain is illigle."
+	else
+		echo -e "This TLD has no whois server, but you can access the whois database at\n$REG_URL"
+	fi
 fi
