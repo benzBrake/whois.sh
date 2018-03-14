@@ -7,7 +7,7 @@ if [ -z $TLD ]; then
 	exit 1
 fi
 SLD=$(echo $DOMAIN | sed "s#.${TLD}##" | sed 's#.*\.##')
-SDM=$(echo $DOMAIN | sed "s#.${SLD}.${TLD}##" | sed 's#.*\.##')
+SDM=$(echo $DOMAIN | sed "s#${SLD}.${TLD}##" | sed 's#\..*##')
 if [[ -z  $SDM ]];then
 	DOMAIN="$SLD.$TLD"
 else
