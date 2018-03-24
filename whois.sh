@@ -40,6 +40,11 @@ test -z "$DOMAIN" && {
 	help_info
 	exit 1
 }
+TLD=$(echo $DOMAIN | sed 's#.*\.##')
+if [[ $TLD == $DOMAIN ]]; then
+	echo "Domain is illegle."
+	exit 1
+fi
 test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
 function prep ()
 {
