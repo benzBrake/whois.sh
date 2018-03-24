@@ -1,12 +1,10 @@
-# whois.sh
-An extended whois client written by shell.
-
-~~Base on command whois. Please install whois before using whois.sh.~~
+A light weight whois tools written by shell.
 
 ## Features
-If the whois command was returned no whois server, whois.sh would connet to iana.org and checkout the whois server automatic.
-
-If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD.sh` in api folder, if exist, call `TLD.sh` to get whois info.
+** Get whois server for iana automatic. **
+** Custom whois server ** support, only support domain whois currently.
+** IP Whois ** support
+** Web whois ** support. If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD.sh` in api folder, if exist, call `TLD.sh` to get whois info.
 
 ## Usage
 ### Install
@@ -28,6 +26,9 @@ or
 ```
 whois.sh -H whois.doufu.ru doufu.ru
 ```
+### Custom whois method
+Put your `TLD.sh` in folder.
+
 ## License
 
 [MIT License](https://github.com/benzBrake/whois.sh/blob/master/LICENSE)
