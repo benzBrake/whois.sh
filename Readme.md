@@ -1,10 +1,13 @@
 A light weight whois tools written by shell.
 
 ## Features
-** Get whois server for iana automatic. **
-** Custom whois server ** support, only support domain whois currently.
-** IP Whois ** support
-** Web whois ** support. If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD.sh` in api folder, if exist, call `TLD.sh` to get whois info.
+**Get whois server for iana automatic.**
+
+**Custom whois server** support, only support domain whois currently.
+
+**IP Whois** support
+
+**Web whois** support. If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD.sh` in api folder, if exist, call `TLD.sh` to get whois info.
 
 ## Usage
 ### Install
