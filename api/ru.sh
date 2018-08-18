@@ -13,6 +13,8 @@ if [[ -z  $SDM ]];then
 else
 	DOMAIN="$SDM.$SLD.$TLD"
 	[[ $SLD == "com" ]] && SERVER=whois.reg.ru
+	[[ $SLD == "net" ]] && SERVER=whois.nic.net.ru
+        [[ $SLD == "org" ]] && SERVER=whois.nic.net.ru
 	[[ $SLD == "msk" ]] && SERVER=whois.regtime.net
 	[[ $SLD == "spb" ]] && SERVER=whois.nic.ru
 	[[ $SLD == "pp" ]] && SERVER=whois.nic.ru
