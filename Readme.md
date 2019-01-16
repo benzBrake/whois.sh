@@ -30,7 +30,7 @@ or
 whois.sh -H whois.doufu.ru doufu.ru
 ```
 ### Custom whois method
-Put your `TLD.sh` in folder.
+Put your `TLD.sh` in folder `api`.
 
 ## License
 
