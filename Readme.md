@@ -1,7 +1,7 @@
 A light weight whois tools written by shell.
 
 ## Features
-**Get whois server for iana automatic.**
+**Get whois server from iana automatic.**
 
 **Custom whois server** support, only support domain whois currently.
 
