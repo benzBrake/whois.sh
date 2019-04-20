@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# function defined start
 help_info() {
 	echo "Usage: $(basename $0) [OPTION[=PATTERN]]"
 	echo "whois.sh | whois client written by shell."
@@ -13,6 +14,11 @@ help_info() {
 	echo ""
 	echo "Report bugs to github-benzBrake@woai.ru"
 }
+function prep ()
+{
+	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
+}
+# function defined end
 while echo $1 | grep -q ^-; do
 	eval $( echo $1 | sed 's/^-//' )=$2
 	shift
@@ -46,10 +52,6 @@ if [[ $TLD == $DOMAIN ]]; then
 	exit 1
 fi
 test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
-function prep ()
-{
-	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
-}
 IP=$(prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
 DOMAIN=$(echo "$DOMAIN" | sed 's#.*http.*//##;s#/.*##')
 WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
