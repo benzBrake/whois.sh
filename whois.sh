@@ -47,17 +47,20 @@ test -z "$DOMAIN" && {
 	exit 1
 }
 TLD=$(echo $DOMAIN | sed 's#.*\.##')
-if [[ $TLD == $DOMAIN ]]; then
+if [[ $(echo $domain | grep -v ":") ]] && [[ $TLD == $DOMAIN ]]; then
 	echo "Domain is illegle."
 	exit 1
 fi
 test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
-IP=$(prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
+IPV4=$(prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
+IPV6=$(prep "$(echo "$DOMAIN" | egrep -o "([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]){0,4}")")
 DOMAIN=$(echo "$DOMAIN" | sed 's#.*http.*//##;s#/.*##')
 WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 ! test -z "$DOMAIN" && {
-	if [[ "$IP" == "$DOMAIN" ]]; then
+	if [[ "$IPV4" == "$DOMAIN" ]]; then
 		"$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
+	elif [[ "$IPV6" == "$DOMAIN" ]]; then
+		echo "IPv6 support is unavaliable."
 	else
 		test -z "$PORT" && {
 			PORT=43
