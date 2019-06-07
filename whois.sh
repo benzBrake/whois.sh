@@ -1,24 +1,7 @@
 #!/usr/bin/env bash
-# function defined start
-help_info() {
-	echo "Usage: $(basename $0) [OPTION[=PATTERN]]"
-	echo "whois.sh | whois client written by shell."
-	echo "Different OPTION has different PATTERN."
-	echo "Example: $(basename $0) -i doufu.ru"
-	echo "Example: $(basename $0) doufu.ru"
-	echo ""
-	echo "OPTIONs and PATTERNs"
-	echo "  -i,-I,-iana,-IANA		get whois infomation from iana"
-	echo "  -h,-H,-host			specify whois server"
-	echo "  -p,-P,-port			specify whois port"
-	echo ""
-	echo "Report bugs to github-benzBrake@woai.ru"
-}
-function prep ()
-{
-	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
-}
-# function defined end
+# Load functions
+test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
+source "$WHOIS_WORKING_DIR/inc/functions.sh"
 while echo $1 | grep -q ^-; do
 	eval $( echo $1 | sed 's/^-//' )=$2
 	shift
@@ -43,7 +26,7 @@ DOMAIN=$@
 test -z "$DOMAIN" && {
 	echo "Arguments Error."
 	echo "====================================="
-	help_info
+	__help_info
 	exit 1
 }
 TLD=$(echo $DOMAIN | sed 's#.*\.##')
@@ -51,9 +34,8 @@ if [[ $(echo $domain | grep -v ":") ]] && [[ $TLD == $DOMAIN ]]; then
 	echo "Domain is illegle."
 	exit 1
 fi
-test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
-IPV4=$(prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
-IPV6=$(prep "$(echo "$DOMAIN" | egrep -o "([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]){0,4}")")
+IPV4=$(__prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
+IPV6=$(__prep "$(echo "$DOMAIN" | egrep -o "([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]){0,4}")")
 DOMAIN=$(echo "$DOMAIN" | sed 's#.*http.*//##;s#/.*##')
 WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 ! test -z "$DOMAIN" && {
