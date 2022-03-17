@@ -36,8 +36,8 @@ if [[ $(echo $domain | grep -v ":") ]] && [[ $TLD == $DOMAIN ]]; then
 fi
 IPV4=$(__prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
 IPV6=$(__prep "$(echo "$DOMAIN" | egrep -o "([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]){0,4}")")
-DOMAIN=$(echo "$DOMAIN" | sed 's#.*http.*//##;s#/.*##')
-WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
+DOMAIN=$(__prep "$DOMAIN")
+__WHOIS_BIN="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 ! test -z "$DOMAIN" && {
 	if [[ "$IPV4" == "$DOMAIN" ]]; then
 		"$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
@@ -49,21 +49,21 @@ WHOIS="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 		}
 		if [ -z "$SERVER" ]; then
 			# Built-in whois order
-			TLD=$(echo $DOMAIN | sed 's#.*\.##')
+			TLD=$(__get_tld $DOMAIN)
 			if [ -e "${WHOIS_WORKING_DIR}/api/${TLD}.sh" ]; then
 				# Api first
 				RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
 			else
-				RESULT=$("$WHOIS" $DOMAIN)
+				RESULT=$("$__WHOIS_BIN" $DOMAIN)
 				# .com whois hack
 				echo "$RESULT" | grep -i 'with "xxx"' > /dev/null
 				test $? -eq 0 && {
-					RESULT=$("$WHOIS" "domain $DOMAIN")
+					RESULT=$("$__WHOIS_BIN" "domain $DOMAIN")
 				}
 			fi
 		else
 			# Specify whois server
-			RESULT=$("$WHOIS" -h $SERVER -p $PORT $DOMAIN)
+			RESULT=$("$__WHOIS_BIN" -h $SERVER -p $PORT $DOMAIN)
 			echo "$RESULT"
 		fi
 	fi

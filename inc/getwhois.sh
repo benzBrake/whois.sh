@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source "$WHOIS_WORKING_DIR/inc/functions.sh"
 while echo $1 | grep -q ^-; do
 	eval $( echo $1 | sed 's/^-//' )=$2
 	shift
@@ -16,14 +17,15 @@ test -z "$DOMAIN" && {
 	exit 1;
 }
 test -z "$SERVER" && {
-	if [ -f servers.list ]; then
-		. servers.list
-	fi
-	TLD=$(echo $DOMAIN | sed 's#.*\.##')
+	TLD=$(__get_tld $DOMAIN)
+	# Remove useless sub domain from domain
+	DOMAIN=$(echo $DOMAIN | sed "s/.$TLD//" | sed 's/.*\.//g').$TLD
 	if [ -f "$WHOIS_WORKING_DIR/servers.list" ]; then
-		. "$WHOIS_WORKING_DIR/servers.list"
+		_line=$(grep "^$TLD=" "$WHOIS_WORKING_DIR/servers.list")
+		if [ -n "$_line" ]; then
+			SERVER="$(echo $_line | awk -F'=' '{print $2}')"
+		fi
 	fi
-	SERVER=$(eval echo '$'$TLD)
 	# Skip illigle domain
 	if [[ "$SERVER" == "illigle" ]]; then
 		echo "Domain is illigle."
