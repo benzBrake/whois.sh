@@ -17,7 +17,7 @@ apt install git curl -y # Debian/Ubuntu/WSL
 cd ~
 git clone https://github.com/benzBrake/whois.sh.git .whois.sh
 chmod +x ~/.whois.sh/*.sh ~/.whois.sh/*/*.sh
-echo '. ~/.whois.sh/whois.sh.env' >> ~/.bashrc
+echo '. ~/.whois.sh/whois.sh.env' >> ~/.bash_profile
 exec $SHELL
 ```
 ### How to whois
