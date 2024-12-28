@@ -51,9 +51,9 @@ __WHOIS_BIN="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 		if [ -z "$SERVER" ]; then
 			# Built-in whois order
 			TLD=$(__get_tld $DOMAIN)
-			if [ -e "${WHOIS_WORKING_DIR}/api/${TLD}.sh" ]; then
+			if [ -e "${WHOIS_WORKING_DIR}/bin/${TLD}.sh" ]; then
 				# Api first
-				RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
+				RESULT=$("${WHOIS_WORKING_DIR}/bin/${TLD}.sh" "$DOMAIN")
 			else
 				RESULT=$("$__WHOIS_BIN" $DOMAIN)
 				# .com whois hack
