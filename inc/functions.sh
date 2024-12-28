@@ -1,25 +1,26 @@
 #!/usr/bin/env bash
 # output help info
 __help_info() {
-	echo "Usage: $(basename $0) [OPTION[=PATTERN]]"
-	echo "whois.sh | whois client written by shell."
-	echo "Different OPTION has different PATTERN."
-	echo "Example: $(basename $0) -i doufu.ru"
-	echo "Example: $(basename $0) doufu.ru"
-	echo ""
-	echo "OPTIONs and PATTERNs"
-	echo "  -i,-I,-iana,-IANA		get whois infomation from iana"
-	echo "  -h,-H,-host			specify whois server"
-	echo "  -p,-P,-port			specify whois port"
-	echo ""
-	echo "Report bugs to github-benzBrake@woai.ru"
+    cat <<EOF
+Usage: $(basename $0) [OPTION[=PATTERN]]
+whois.sh | whois client written by shell.
+Different OPTION has different PATTERN.
+Example: $(basename $0) -i doufu.ru
+Example: $(basename $0) doufu.ru
+OPTIONs and PATTERNs
+  -i,-I,-iana,-IANA    get whois infomation from iana
+  -h,-H,-host          specify whois server
+  -p,-P,-port          specify whois port
+Report bugs to github-benzBrake@woai.ru
+EOF
 }
-# remove blank
-function __prep()
-{
+
+# trim string
+__prep() {
 	echo "$1" | sed -e 's/^ *//g' -e 's/ *$//g' | sed -n '1 p'
 }
-# Get tld from domain
+
+# get tld from domain
 function __get_tld() {
 	_tld="$(__prep "$@")"
 	while :; do echo > /dev/null
@@ -36,4 +37,10 @@ function __get_tld() {
 	else
 		echo "$_tlda"
 	fi
+}
+
+# detect if string contain {{domain}}
+__contain_string() {
+    [ -n "$(echo "$1" | grep "$2")" ]
+    return $?
 }

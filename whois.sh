@@ -34,8 +34,9 @@ if [[ $(echo $domain | grep -v ":") ]] && [[ $TLD == $DOMAIN ]]; then
 	echo "Domain is illegle."
 	exit 1
 fi
-IPV4=$(__prep "$(echo "$DOMAIN" | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')")
-IPV6=$(__prep "$(echo "$DOMAIN" | egrep -o "([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]){0,4}")")
+# Extract and prepare IPv4, IPv6, and DOMAIN in a more efficient way
+IPV4=$(__prep "$(grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}' <<< "$DOMAIN")")
+IPV6=$(__prep "$(grep -oE '([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]{0,4})' <<< "$DOMAIN")")
 DOMAIN=$(__prep "$DOMAIN")
 __WHOIS_BIN="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 ! test -z "$DOMAIN" && {
