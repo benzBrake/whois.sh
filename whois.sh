@@ -47,8 +47,8 @@ if [[ -z "$DOMAIN" ]]; then
     exit 1
 fi
 
-# 提取 TLD
-TLD=$(echo "$DOMAIN" | sed 's#.*\.##')
+# 提取 TLD（使用智能解析函数）
+TLD=$(__get_tld "$DOMAIN")
 
 # 域名格式验证
 if [[ $(echo "$DOMAIN" | grep -v ":") ]] && [[ "$TLD" == "$DOMAIN" ]]; then
