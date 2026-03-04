@@ -1,13 +1,33 @@
 A light weight whois tools written by shell.
 
 ## Features
-**Get whois server from iana automatic.**
 
-**Custom whois server** support, only support domain whois currently.
+- **Automatic WHOIS Server Detection**: Automatically retrieve WHOIS server from IANA
+- **Custom WHOIS Server**: Specify custom WHOIS server and port for domain queries
+- **IP WHOIS**: Support for both IPv4 and IPv6 address queries
+- **RDAP Protocol**: Modern RDAP protocol support for new TLDs (.dev, .app, etc.)
+- **Web WHOIS**: For TLDs that only provide web-based WHOIS (e.g., .tt), automatically calls `TLD.sh` from `api/` folder
+- **Smart Caching**: Caches WHOIS servers and IP prefixes to improve performance
+- **Secure by Design**: Input validation, path traversal protection, and injection prevention
 
-**IP Whois** support
+## Project Structure
 
-**Web whois** support. If a TLD only can whois on website, for example, tt, whois.sh will checkout `TLD.sh` in api folder, if exist, call `TLD.sh` to get whois info.
+```
+whois.sh/
+├── whois.sh              # Main entry script
+├── whois.sh.env          # Environment configuration
+├── servers.list          # TLD to WHOIS server mapping
+├── api/                  # Custom API scripts for special TLDs
+│   ├── al.sh            # .al domain API
+│   ├── com.sh           # .com domain special handling
+│   └── tt.sh            # .tt domain web API
+└── inc/                  # Core function modules
+    ├── functions.sh      # Core function library
+    ├── getwhois.sh       # WHOIS query logic
+    ├── ip.sh            # IP address query module
+    ├── rdap.sh          # RDAP protocol module
+    └── tcp.sh           # TCP connection utility
+```
 
 ## Usage
 ### Install
@@ -20,17 +40,45 @@ chmod +x ~/.whois.sh/*.sh ~/.whois.sh/*/*.sh
 echo '. ~/.whois.sh/whois.sh.env' >> ~/.bash_profile
 exec $SHELL
 ```
-### How to whois
+### Basic Query
+
+```bash
+# Query domain
+whois.sh example.com
+whois.sh github.com
+
+# Query IPv4 address
+whois.sh 8.8.8.8
+
+# Query IPv6 address
+whois.sh 2001:4860:4860::8888
 ```
-whois.sh domain
-whois.sh ip
+
+### Custom WHOIS Server
+
+```bash
+# Specify custom WHOIS server
+whois.sh -H whois.example.com example.com
+
+# Specify custom port
+whois.sh -H whois.example.com -p 4343 example.com
+
+# Query from IANA
+whois.sh -i example.com
 ```
-or
+
+### API Extensions
+
+To add support for a TLD that only provides web-based WHOIS, create a `TLD.sh` script in the `api/` folder:
+
+```bash
+#!/bin/bash
+# api/yourtld.sh
+# Your custom logic to fetch and parse whois data
+# Output should be in standard whois format
 ```
-whois.sh -H whois.doufu.ru doufu.ru
-```
-### Custom whois method
-Put your `TLD.sh` in folder `api`.
+
+The script will be automatically called when querying domains with that TLD.
 
 ## License
 [Anti-996 License](LICENSE)
