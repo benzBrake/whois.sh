@@ -57,11 +57,12 @@ if [[ -z "$SERVER" ]]; then
     # 规范化域名
     DOMAIN=$(echo "$DOMAIN" | sed "s/.$TLD//" | sed 's/.*\.//g').$TLD
 
-    # 从本地缓存读取服务器
+    # 从本地缓存读取服务器（兼容 Windows CRLF 和 Unix LF）
     if [[ -f "$WHOIS_WORKING_DIR/servers.list" ]]; then
-        _line=$(grep "^${TLD}=" "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null || true)
+        _line=$(grep "^${TLD}=" "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null | tr -d '\r' || true)
         if [[ -n "$_line" ]]; then
             SERVER=${_line#*=}
+            SERVER=$(echo "$SERVER" | tr -d '\r')
         fi
     fi
 
