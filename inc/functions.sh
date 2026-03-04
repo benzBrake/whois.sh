@@ -96,3 +96,74 @@ __validate_filepath() {
     [[ "$filepath" =~ \.\. ]] && return 1
     return 0
 }
+
+# ============ RDAP 查询函数 ============
+
+# RDAP 查询
+__rdap_query() {
+    local domain="$1"
+    local server="${2:-}"
+    local encoded_domain=$(__escape_url "$domain")
+
+    if [[ -n "$server" ]]; then
+        curl -s "${server}domain/${encoded_domain}"
+    else
+        return 1
+    fi
+}
+
+# 从 JSON 中提取字段值（不依赖 jq）
+__json_value() {
+    local json="$1"
+    local key="$2"
+    # 匹配键值对，避免匹配嵌套对象中的同名键（使用逗号或大括号作为分隔符）
+    echo "$json" | grep -oE "[,{]\s*\"${key}\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | \
+        sed 's/.*"'"${key}"'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | head -1
+}
+
+# 从 JSON 中提取对象数组中的特定字段
+__json_array_values() {
+    local json="$1"
+    local key="$2"
+    local subkey="${3:-}"
+
+    if [[ -n "$subkey" ]]; then
+        echo "$json" | grep -o "\"${key}\"[[:space:]]*:[[:space:]]*\[[^]]*\]" | \
+            sed 's/.*\[\(.*\)\].*/\1/' | grep -o '{[^}]*}' | \
+            grep "\"${subkey}\"" | sed 's/.*"'${subkey}'"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/'
+    else
+        echo "$json" | grep -o "\"${key}\"[[:space:]]*:[[:space:]]*\[[^]]*\]" | \
+            sed 's/.*\[\(.*\)\].*/\1/' | grep -o '"[^"]*"' | tr -d '"'
+    fi
+}
+
+# 解析 RDAP JSON 响应为 whois 格式
+__rdap_parse() {
+    local json="$1"
+
+    # 检查 jq 是否可用
+    if ! command -v jq &>/dev/null; then
+        echo "Error: jq is required for RDAP parsing. Please install jq." >&2
+        return 1
+    fi
+
+    # 使用 jq 解析并格式化输出
+    echo "$json" | jq -r '
+        # 基本信息
+        if .ldhName then "DOMAIN: \(.ldhName)" else empty end,
+        if .handle then "Registry ID: \(.handle)" else empty end,
+
+        # 状态
+        if .status then "Status: \([.status[] | tostring] | join(", "))" else empty end,
+
+        # 事件时间
+        (.events[]? | select(.eventAction == "registration") | "Created: \(.eventDate)"),
+        (.events[]? | select(.eventAction == "last changed") | "Updated: \(.eventDate)"),
+        (.events[]? | select(.eventAction == "expiration") | "Expires: \(.eventDate)"),
+
+        # 名称服务器
+        if .nameservers then "Nameservers:",
+            (.nameservers[]? | "  \(.ldhName)")
+        else empty end
+    ' | grep -v '^$'
+}

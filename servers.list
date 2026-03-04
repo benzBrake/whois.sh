@@ -24,3 +24,10 @@ site=whois.nic.site
 xyz=whois.nic.xyz
 cn=whois.cnnic.cn
 top=whois.nic.top
+
+# Google Registry (Charleston Road Registry) - RDAP only
+dev=rdap://pubapi.registry.google/rdap/
+app=rdap://pubapi.registry.google/rdap/
+page=rdap://pubapi.registry.google/rdap/
+how=rdap://pubapi.registry.google/rdap/
+soy=rdap://pubapi.registry.google/rdap/

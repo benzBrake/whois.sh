@@ -96,6 +96,13 @@ fi
 
 # 执行 whois 查询
 if [[ -n "$SERVER" ]]; then
+    # 检查是否为 RDAP 服务器
+    if [[ "$SERVER" == rdap://* ]]; then
+        # 使用 RDAP 查询
+        "$WHOIS_WORKING_DIR/inc/rdap.sh" "$DOMAIN" "$SERVER"
+        exit $?
+    fi
+
     # 验证服务器地址
     if ! __validate_hostname "$SERVER"; then
         echo "Error: Invalid whois server address." >&2
