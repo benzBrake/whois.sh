@@ -47,19 +47,41 @@ if [[ -z "$DOMAIN" ]]; then
     exit 1
 fi
 
-# 提取 TLD（使用智能解析函数）
-TLD=$(__get_tld "$DOMAIN")
+# Extract and prepare IPv4, IPv6, and DOMAIN in a more efficient way
+IPV4=$(__prep "$(grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}' <<< "$DOMAIN")")
+IPV6=$(__prep "$(grep -oE '([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]{0,4})' <<< "$DOMAIN")")
+DOMAIN=$(__prep "$DOMAIN")
+__WHOIS_BIN="$WHOIS_WORKING_DIR/inc/getwhois.sh"
 
-# 域名格式验证
-if [[ $(echo "$DOMAIN" | grep -v ":") ]] && [[ "$TLD" == "$DOMAIN" ]]; then
-    echo "Error: Invalid domain format." >&2
-    exit 1
-fi
-
-# 验证域名安全性（防止命令注入）
-if ! __validate_domain "$DOMAIN"; then
-    echo "Error: Invalid domain format or potentially dangerous input." >&2
-    exit 1
+# 根据输入类型进行不同的验证
+if [[ "$IPV4" == "$DOMAIN" ]]; then
+    # IPv4 地址 - 验证 IP 格式
+    if ! __validate_ip "$DOMAIN"; then
+        echo "Error: Invalid IPv4 address format." >&2
+        exit 1
+    fi
+elif [[ "$IPV6" == "$DOMAIN" ]]; then
+    # IPv6 地址 - 验证 IPv6 格式
+    if ! __validate_ipv6 "$DOMAIN"; then
+        echo "Error: Invalid IPv6 address format." >&2
+        exit 1
+    fi
+else
+    # 域名 - 进行域名验证
+    # 提取 TLD（使用智能解析函数）
+    TLD=$(__get_tld "$DOMAIN")
+    
+    # 域名格式验证
+    if [[ $(echo "$DOMAIN" | grep -v ":") ]] && [[ "$TLD" == "$DOMAIN" ]]; then
+        echo "Error: Invalid domain format." >&2
+        exit 1
+    fi
+    
+    # 验证域名安全性（防止命令注入）
+    if ! __validate_domain "$DOMAIN"; then
+        echo "Error: Invalid domain format or potentially dangerous input." >&2
+        exit 1
+    fi
 fi
 
 # 验证服务器名称（如果提供）
@@ -74,18 +96,26 @@ if ! __validate_port "$PORT"; then
     exit 1
 fi
 
-# Extract and prepare IPv4, IPv6, and DOMAIN in a more efficient way
-IPV4=$(__prep "$(grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}' <<< "$DOMAIN")")
-IPV6=$(__prep "$(grep -oE '([0-9a-fA-F]{0,4}:){1,7}([0-9a-fA-F]{0,4})' <<< "$DOMAIN")")
-DOMAIN=$(__prep "$DOMAIN")
-__WHOIS_BIN="$WHOIS_WORKING_DIR/inc/getwhois.sh"
-
 if [[ -n "$DOMAIN" ]]; then
     if [[ "$IPV4" == "$DOMAIN" ]]; then
-        # IP 地址查询
+        # IPv4 地址查询
         "$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
     elif [[ "$IPV6" == "$DOMAIN" ]]; then
-        echo "IPv6 support is unavailable."
+        # IPv6 地址查询
+        # 从 IANA 查询 whois 服务器
+        RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "whois.iana.org" -port "43" -data "$DOMAIN")
+        
+        # 提取 whois 服务器
+        HANDLER=$(echo -e "$RESULT" | grep 'whois:' | sed 's#^[^ ]* *##' | tr -d ' ')
+        
+        if [[ -z "$HANDLER" ]]; then
+            echo "Error: This IPv6 address is not supported." >&2
+            exit 1
+        fi
+        
+        # 查询 IPv6 whois 信息
+        RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "$HANDLER" -port "43" -data "$DOMAIN")
+        echo -e "$RESULT"
     else
         # 域名查询
         if [[ -z "$SERVER" ]]; then

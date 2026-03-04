@@ -37,11 +37,14 @@ if ! __validate_port "$PORT" 2>/dev/null; then
     exit 1
 fi
 
-# 验证数据（域名）
+# 验证数据（域名、IPv4 或 IPv6）
 if ! __validate_domain "$DATA" 2>/dev/null; then
     # 允许 IP 地址
     if ! __validate_ip "$DATA" 2>/dev/null; then
-        exit 1
+        # 允许 IPv6 地址
+        if ! __validate_ipv6 "$DATA" 2>/dev/null; then
+            exit 1
+        fi
     fi
 fi
 

@@ -66,6 +66,23 @@ __validate_ip() {
 }
 
 # 验证端口号
+
+# 验证 IPv6 地址格式
+__validate_ipv6() {
+    local ip="$1"
+    # 简化的 IPv6 验证：检查是否包含冒号且符合基本格式
+    [[ "$ip" =~ : ]] || return 1
+    # 检查是否只包含合法的 IPv6 字符（0-9, a-f, A-F, :）
+    [[ "$ip" =~ ^[0-9a-fA-F:]+$ ]] || return 1
+    # 排除连续的冒号（除非是 :: 缩写）
+    local consecutive_colons=$(echo "$ip" | grep -o '::' | wc -l)
+    if [[ $consecutive_colons -gt 1 ]]; then
+        return 1
+    fi
+    # 排除 ::: 或更多连续冒号
+    [[ "$ip" =~ :::: ]] && return 1
+    return 0
+}
 __validate_port() {
     local port="$1"
     [[ "$port" =~ ^[0-9]+$ ]] || return 1
