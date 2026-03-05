@@ -116,6 +116,7 @@ bo=whois.nic.bo
 br=whois.registro.br
 
 # bs - Bahamas (no whois server)
+bs=url:http://www.register.bs
 
 # bt - Bhutan (no whois server)
 
