@@ -69,10 +69,11 @@ aw=whois.nic.aw
 # ax - Aland Islands
 ax=whois.ax
 
-# az - Azerbaijan (no whois server)
+# az - Azerbaijan (web only)
+az=url:https://whois.az/
 
 # ba - Bosnia and Herzegovina (web only)
-ba=url:http://www.nic.ba
+ba=url:https://www.nic.ba/
 
 # bb - Barbados (no whois server)
 
