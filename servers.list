@@ -277,7 +277,8 @@ gp=whois.nic.gp
 # gq - Equatorial Guinea
 gq=whois.dominio.gq
 
-# gr - Greece (no whois server)
+# gr - Greece (web only)
+gr=url:https://grweb.ics.forth.gr/public/whois?lang=en
 
 # gs - South Georgia and the South Sandwich Islands
 gs=whois.nic.gs
