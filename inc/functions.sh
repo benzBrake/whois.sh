@@ -108,10 +108,43 @@ __escape_url() {
 }
 
 # 验证文件路径安全（防止路径遍历）
+# 支持合法的相对路径（如 inc/../servers.list），但防止遍历到项目根目录之外
 __validate_filepath() {
     local filepath="$1"
-    [[ "$filepath" =~ \.\. ]] && return 1
-    return 0
+
+    # 如果路径不包含 ..，直接通过
+    if [[ ! "$filepath" =~ \.\. ]]; then
+        return 0
+    fi
+
+    # 获取项目根目录（从脚本位置推断）
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+
+    # 尝试规范化路径（使用 realpath 或 readlink -f）
+    local normalized_path
+    if command -v realpath &>/dev/null; then
+        normalized_path="$(realpath -m "$filepath" 2>/dev/null)" || normalized_path="$filepath"
+    elif command -v readlink &>/dev/null; then
+        normalized_path="$(readlink -f "$filepath" 2>/dev/null)" || normalized_path="$filepath"
+    else
+        # 备选方案：确保路径不会遍历到根目录之外
+        # 计算路径中 .. 的数量，确保不会超出项目根目录
+        local dot_dot_count
+        dot_dot_count="$(grep -o '\.\.' <<< "$filepath" | wc -l)"
+        local dir_count
+        dir_count="$(tr -cd '/' <<< "$filepath" | wc -c)"
+
+        # 如果 .. 的数量小于或等于目录层数，则是安全的
+        [[ "$dot_dot_count" -le "$dir_count" ]] && return 0
+    fi
+
+    # 检查规范化后的路径是否以项目根目录开头
+    local real_root
+    real_root="$(cd "$script_dir" && pwd)"
+    [[ "$normalized_path" == "$real_root"* ]] && return 0
+
+    return 1
 }
 
 # ============ RDAP 查询函数 ============
