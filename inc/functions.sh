@@ -217,3 +217,27 @@ __rdap_parse() {
         else empty end
     ' | grep -v '^$'
 }
+# 查找 API 脚本，支持多级后缀（如 .asso.st, .fr.nf）
+# 优先尝试完整后缀，然后回退到单级 TLD
+__find_api_script() {
+    local domain="$1"
+    local api_dir="$2"
+
+    # 获取域名后缀部分（移除第一个部分）
+    local suffix=$(echo "$domain" | sed 's/^[^.]*\.//')
+
+    # 先尝试完整后缀（如 asso.st, fr.nf）
+    if [[ -f "${api_dir}/${suffix}.sh" ]]; then
+        echo "${suffix}.sh"
+        return 0
+    fi
+
+    # 回退到单级 TLD（如 st, nf）
+    local tld=$(__get_tld "$domain")
+    if [[ -f "${api_dir}/${tld}.sh" ]]; then
+        echo "${tld}.sh"
+        return 0
+    fi
+
+    return 1
+}
