@@ -1,33 +1,64 @@
-eu.org=whois.eu.org
-ru=whois.ripn.net
-com.ru=whois.reg.ru
-net.ru=whois.nic.net.ru
-org.ru=whois.nic.net.ru
-msk.ru=whois.regtime.net
-spb.ru=whois.nic.ru
-pp.ru=whois.nic.ru
-sochi.ru=whois.nic.ru
-pp.ua=whois.pp.ua
+# gTLD (Generic Top-Level Domains)
+
+# Traditional gTLD
+biz=whois.neustar.biz
 com=whois.verisign-grs.com
+info=whois.afilias.net
+name=whois.nic.name
 net=whois.verisign-grs.com
 org=whois.pir.org
-info=whois.afilias.net
-biz=whois.neustar.biz
-name=whois.nic.name
-io=whois.nic.io
-co=whois.nic.co
-ai=whois.nic.ai
-tv=whois.nic.tv
-me=whois.nic.me
+
+# New gTLD (ICANN 2012+)
 online=whois.nic.online
 site=whois.nic.site
-xyz=whois.nic.xyz
-cn=whois.cnnic.cn
 top=whois.nic.top
+xyz=whois.nic.xyz
 
 # Google Registry (Charleston Road Registry) - RDAP only
-dev=rdap://pubapi.registry.google/rdap/
 app=rdap://pubapi.registry.google/rdap/
-page=rdap://pubapi.registry.google/rdap/
+dev=rdap://pubapi.registry.google/rdap/
 how=rdap://pubapi.registry.google/rdap/
+page=rdap://pubapi.registry.google/rdap/
 soy=rdap://pubapi.registry.google/rdap/
+
+# ccTLD (Country Code Top-Level Domains)
+
+# Anguilla
+ai=whois.nic.ai
+
+# China
+cn=whois.cnnic.cn
+
+# Colombia
+co=whois.nic.co
+
+# Cocos (Keeling) Islands
+cc=ccwhois.verisign-grs.com
+
+# Dominican Republic
+do=whois.nic.do
+
+# British Indian Ocean Territory
+io=whois.nic.io
+
+# Kyrgyzstan
+kg=whois.kg
+
+# Montenegro
+me=whois.nic.me
+
+# Russia
+com.ru=whois.reg.ru
+msk.ru=whois.regtime.net
+net.ru=whois.nic.net.ru
+org.ru=whois.nic.net.ru
+pp.ru=whois.nic.ru
+ru=whois.ripn.net
+sochi.ru=whois.nic.ru
+spb.ru=whois.nic.ru
+
+# Tuvalu
+tv=whois.nic.tv
+
+# Ukraine
+pp.ua=whois.pp.ua
