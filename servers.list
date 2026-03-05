@@ -172,7 +172,8 @@ com.ru=whois.reg.ru
 # cr - Costa Rica
 cr=whois.nic.cr
 
-# cu - Cuba (no whois server)
+# cu - Cuba (web only)
+cu=url:https://www.nic.cu
 
 # cv - Cabo Verde
 cv=whois.nic.cv
