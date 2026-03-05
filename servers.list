@@ -183,7 +183,8 @@ cv=whois.nic.cv
 # cx - Christmas Island
 cx=whois.nic.cx
 
-# cy - Cyprus (no whois server)
+# cy - Cyprus (web only)
+cy=url:https://registry.nic.cy/cy-ui/home
 
 # cz - Czechia
 cz=whois.nic.cz
