@@ -490,7 +490,8 @@ no=whois.norid.no
 
 # np - Nepal (no whois server)
 
-# nr - Nauru (no whois server)
+# nr - Nauru (web only)
+nr=url:https://www.cenpac.net.nr/dns/whois.html
 
 # nu - Niue
 nu=whois.iis.nu
