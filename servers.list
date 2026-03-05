@@ -129,7 +129,8 @@ bw=whois.nic.net.bw
 # by - Belarus
 by=whois.cctld.by
 
-# bz - Belize (no whois server)
+# bz - Belize (web only)
+bz=url:https://www.belizenic.bz/domain-registration/index.php
 
 # ca - Canada
 ca=whois.cira.ca
