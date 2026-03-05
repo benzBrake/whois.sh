@@ -72,6 +72,14 @@ if [[ -z "$SERVER" ]]; then
         exit 1
     fi
 
+    # 检查是否为 URL 格式（需要网页访问的 whois 服务）
+    if [[ "$SERVER" == url:* ]]; then
+        REG_URL="${SERVER#url:}"
+        echo "This TLD has no whois server, but you can access the whois database at:"
+        echo "$REG_URL"
+        exit 0
+    fi
+
     # 如果没有找到服务器，从 IANA 查询
     if [[ -z "$SERVER" ]]; then
         # 使用 URL 编码防止注入
