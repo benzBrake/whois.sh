@@ -2,6 +2,7 @@
 # 设置工作目录
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
+source "$WHOIS_WORKING_DIR/inc/dns.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -38,22 +39,12 @@ RESULT=$(curl -s 'https://cctld.akep.al//whois.al.local/web_root/index.php?c=who
 # 优先检查明确的域名状态语句（如 "Domain xxx is registered"）
 if echo "$RESULT" | grep -qi "Domain.*is registered"; then
     echo "Status: registered"
-
-    # 查询 NS 记录
-    NS_OUTPUT=$(nslookup -type=ns "$DOMAIN" 2>/dev/null)
-
-    # 提取每条 NS 记录并多行输出
-    echo "$NS_OUTPUT" | grep -i "nameserver" | awk '{print "NS: " $NF}'
+    __dns_query_ns_simple "$DOMAIN"
 elif echo "$RESULT" | grep -qi "Domain.*is available\|Domain.*not registered\|Domain.*is free\|no match"; then
     echo "Status: available"
 elif echo "$RESULT" | grep -qi "Domain.*taken\|Domain.*unavailable"; then
     echo "Status: registered"
-
-    # 查询 NS 记录
-    NS_OUTPUT=$(nslookup -type=ns "$DOMAIN" 2>/dev/null)
-
-    # 提取每条 NS 记录并多行输出
-    echo "$NS_OUTPUT" | grep -i "nameserver" | awk '{print "NS: " $NF}'
+    __dns_query_ns_simple "$DOMAIN"
 else
     # 解析失败，返回原始响应的部分内容
     echo "$RESULT" | grep -i "domain\|status\|available\|registered" | head -20
