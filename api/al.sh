@@ -27,7 +27,6 @@ fi
 # 查询 .al 官方 whois 网页
 RESULT=$(curl -s 'https://cctld.akep.al//whois.al.local/web_root/index.php?c=whois' \
     -X POST \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0' \
     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
     -H 'Content-Type: application/x-www-form-urlencoded' \
     -H 'Origin: https://cctld.akep.al' \
