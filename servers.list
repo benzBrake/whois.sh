@@ -71,7 +71,8 @@ ax=whois.ax
 
 # az - Azerbaijan (no whois server)
 
-# ba - Bosnia and Herzegovina (no whois server)
+# ba - Bosnia and Herzegovina (web only)
+ba=url:http://www.nic.ba
 
 # bb - Barbados (no whois server)
 

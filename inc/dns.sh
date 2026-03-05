@@ -104,3 +104,27 @@ __dns_query_ns_simple() {
         done
     fi
 }
+
+# 带 URL 提示的 DNS 查询（用于无 whois 服务器的域名）
+# 参数: $1 - 域名, $2 - 注册局 URL（可选）
+# 输出格式:
+#   提示信息
+#   空行
+#   DNS 查询结果
+__dns_query_with_url_hint() {
+    local domain="$1"
+    local reg_url="${2:-}"
+    local tld="${domain##*.}"
+
+    echo "# ========================================"
+    echo "# NOTE: This TLD does not provide a standard whois service"
+    echo "# The following results are based on DNS queries only"
+    echo "# Please refer to the official registry website for accurate information"
+    if [[ -n "$reg_url" ]]; then
+        echo "# Official query URL: $reg_url"
+    fi
+    echo "# ========================================"
+    echo ""
+
+    __dns_query_ns_smart "$domain"
+}

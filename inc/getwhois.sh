@@ -73,10 +73,12 @@ if [[ -z "$SERVER" ]]; then
     fi
 
     # 检查是否为 URL 格式（需要网页访问的 whois 服务）
+    # 改用 DNS 查询作为替代方案
     if [[ "$SERVER" == url:* ]]; then
         REG_URL="${SERVER#url:}"
-        echo "This TLD has no whois server, but you can access the whois database at:"
-        echo "$REG_URL"
+        # 使用 DNS 查询并显示官方查询地址
+        source "$WHOIS_WORKING_DIR/inc/dns.sh"
+        __dns_query_with_url_hint "$DOMAIN" "$REG_URL"
         exit 0
     fi
 
