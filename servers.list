@@ -75,7 +75,8 @@ az=url:https://whois.az/
 # ba - Bosnia and Herzegovina (web only)
 ba=url:https://www.nic.ba/
 
-# bb - Barbados (no whois server)
+# bb - Barbados (web API)
+bb=url:https://whois.telecoms.gov.bb/search/
 
 # bd - Bangladesh (web only)
 bd=url:https://bdia.btcl.com.bd/
