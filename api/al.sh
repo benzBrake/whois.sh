@@ -23,21 +23,30 @@ if [[ -z "$KEYWORD" ]]; then
     exit 1
 fi
 
-# 使用 URL 编码防止注入
-ENCODED_KEYWORD=$(__escape_url "$KEYWORD")
+# 查询 .al 官方 whois 网页
+RESULT=$(curl -s 'https://cctld.akep.al//whois.al.local/web_root/index.php?c=whois' \
+    -X POST \
+    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0' \
+    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
+    -H 'Content-Type: application/x-www-form-urlencoded' \
+    -H 'Origin: https://cctld.akep.al' \
+    -H 'Referer: https://cctld.akep.al//whois.al.local/web_root/index.php?c=whois' \
+    -H 'Connection: keep-alive' \
+    --data-urlencode "domain=${DOMAIN}")
 
-# 查询 name.al 官方 API
-RESULT=$(curl -s "https://name.al/api/namesuggestions/keyword-availability/${ENCODED_KEYWORD}?tlds=al" \
-    -H 'Accept: application/json, text/plain, */*' \
-    -H 'User-Agent: Mozilla/5.0')
+# 解析 HTML 响应判断域名状态
+# 优先检查明确的域名状态语句（如 "Domain xxx is registered"）
+if echo "$RESULT" | grep -qi "Domain.*is registered"; then
+    echo "Status: registered"
 
-# 解析 JSON 响应
-AVAILABILITY=$(echo "$RESULT" | sed -n 's/.*"availability":"\([^"]*\)".*/\1/p' | head -1)
+    # 查询 NS 记录
+    NS_OUTPUT=$(nslookup -type=ns "$DOMAIN" 2>/dev/null)
 
-# 输出结果
-if [[ "$AVAILABILITY" == "available" ]]; then
+    # 提取每条 NS 记录并多行输出
+    echo "$NS_OUTPUT" | grep -i "nameserver" | awk '{print "NS: " $NF}'
+elif echo "$RESULT" | grep -qi "Domain.*is available\|Domain.*not registered\|Domain.*is free\|no match"; then
     echo "Status: available"
-elif [[ "$AVAILABILITY" == "unavailable" ]]; then
+elif echo "$RESULT" | grep -qi "Domain.*taken\|Domain.*unavailable"; then
     echo "Status: registered"
 
     # 查询 NS 记录
@@ -46,6 +55,6 @@ elif [[ "$AVAILABILITY" == "unavailable" ]]; then
     # 提取每条 NS 记录并多行输出
     echo "$NS_OUTPUT" | grep -i "nameserver" | awk '{print "NS: " $NF}'
 else
-    # 解析失败，返回原始响应
-    echo "$RESULT"
+    # 解析失败，返回原始响应的部分内容
+    echo "$RESULT" | grep -i "domain\|status\|available\|registered" | head -20
 fi
