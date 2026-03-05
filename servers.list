@@ -23,42 +23,706 @@ soy=rdap://pubapi.registry.google/rdap/
 
 # ccTLD (Country Code Top-Level Domains)
 
-# Anguilla
+# ac - Ascension Island
+ac=whois.nic.ac
+
+# ad - Andorra
+ad=whois.nic.ad
+
+# ae - United Arab Emirates
+ae=whois.aeda.net.ae
+
+# af - Afghanistan
+af=whois.nic.af
+
+# ag - Antigua and Barbuda
+ag=whois.nic.ag
+
+# al - Albania (web only)
+al=url:https://akep.al/e-aplikime-domain/
+
+# ai - Anguilla
 ai=whois.nic.ai
 
-# China
-cn=whois.cnnic.cn
+# am - Armenia
+am=whois.amnic.net
 
-# Colombia
-co=whois.nic.co
+# ao - Angola (no whois server)
 
-# Cocos (Keeling) Islands
+# aq - Antarctica (no whois server)
+
+# ar - Argentina
+ar=whois.nic.ar
+
+# as - American Samoa
+as=whois.nic.as
+
+# at - Austria
+at=whois.nic.at
+
+# au - Australia
+au=whois.auda.org.au
+
+# aw - Aruba
+aw=whois.nic.aw
+
+# ax - Aland Islands
+ax=whois.ax
+
+# az - Azerbaijan (no whois server)
+
+# ba - Bosnia and Herzegovina (no whois server)
+
+# bb - Barbados (no whois server)
+
+# bd - Bangladesh (web only)
+bd=url:https://bdia.btcl.com.bd/
+
+# be - Belgium
+be=whois.dns.be
+
+# bf - Burkina Faso
+bf=whois.registre.bf
+
+# bg - Bulgaria
+bg=whois.register.bg
+
+# bh - Bahrain
+bh=whois.nic.bh
+
+# bi - Burundi
+bi=whois1.nic.bi
+
+# bj - Benin
+bj=whois.nic.bj
+
+# bl - Saint Barthelemy (no whois server)
+
+# bm - Bermuda
+bm=whois.nic.bm
+
+# bn - Brunei Darussalam
+bn=whois.bnnic.bn
+
+# bo - Bolivia
+bo=whois.nic.bo
+
+# bq - Bonaire, Sint Eustatius and Saba (no whois server)
+
+# br - Brazil
+br=whois.registro.br
+
+# bs - Bahamas (no whois server)
+
+# bt - Bhutan (no whois server)
+
+# bv - Bouvet Island (web only)
+bv=url:https://www.norid.no/en/omnorid/toppdomenet-bv/
+
+# bw - Botswana
+bw=whois.nic.net.bw
+
+# by - Belarus
+by=whois.cctld.by
+
+# bz - Belize (no whois server)
+
+# ca - Canada
+ca=whois.cira.ca
+
+# cc - Cocos (Keeling) Islands
 cc=ccwhois.verisign-grs.com
 
-# Dominican Republic
+# cd - Congo, The Democratic Republic (no whois server)
+
+# cf - Central African Republic
+cf=whois.dot.cf
+
+# cg - Congo (web only)
+cg=url:https://www.dnsafrica.net
+
+# ch - Switzerland
+ch=whois.nic.ch
+
+# ci - Cote d'Ivoire
+ci=whois.nic.ci
+
+# ck - Cook Islands (no whois server)
+
+# cl - Chile
+cl=whois.nic.cl
+
+# cm - Cameroon
+cm=whois.nic.cm
+
+# cn - China
+cn=whois.cnnic.cn
+
+# co - Colombia
+co=whois.nic.co
+
+# com.ru - Russia (commercial)
+com.ru=whois.reg.ru
+
+# cr - Costa Rica
+cr=whois.nic.cr
+
+# cu - Cuba (no whois server)
+
+# cv - Cabo Verde
+cv=whois.nic.cv
+
+# cw - Curaçao (no whois server)
+
+# cx - Christmas Island
+cx=whois.nic.cx
+
+# cy - Cyprus (no whois server)
+
+# cz - Czechia
+cz=whois.nic.cz
+
+# de - Germany
+de=whois.denic.de
+
+# dj - Djibouti (no whois server)
+
+# dk - Denmark
+dk=whois.punktum.dk
+
+# dm - Dominica
+dm=whois.dmdomains.dm
+
+# do - Dominican Republic
 do=whois.nic.do
 
-# British Indian Ocean Territory
-io=whois.nic.io
+# dz - Algeria
+dz=whois.nic.dz
 
-# Kyrgyzstan
+# ec - Ecuador
+ec=whois.nic.ec
+
+# ee - Estonia
+ee=whois.tld.ee
+
+# eg - Egypt (no whois server)
+
+# eh - Western Sahara (no whois server)
+
+# er - Eritrea (no whois server)
+
+# es - Spain
+es=whois.nic.es
+
+# et - Ethiopia (no whois server)
+
+# eu - European Union
+eu=whois.eu
+
+# fi - Finland
+fi=whois.fi
+
+# fj - Fiji
+fj=www.whois.fj
+
+# fk - Falkland Islands (no whois server)
+
+# fm - Micronesia
+fm=whois.nic.fm
+
+# fo - Faroe Islands
+fo=whois.nic.fo
+
+# fr - France
+fr=whois.nic.fr
+
+# ga - Gabon (no whois server)
+
+# gb - United Kingdom (no whois server)
+
+# gd - Grenada
+gd=whois.nic.gd
+
+# ge - Georgia
+ge=whois.nic.ge
+
+# gf - French Guiana
+gf=whois.mediaserv.net
+
+# gg - Guernsey
+gg=whois.gg
+
+# gh - Ghana
+gh=whois.nic.gh
+
+# gi - Gibraltar
+gi=whois.identitydigital.services
+
+# gl - Greenland
+gl=whois.nic.gl
+
+# gm - Gambia (no whois server)
+
+# gn - Guinea
+gn=whois.ande.gov.gn
+
+# gp - Guadeloupe
+gp=whois.nic.gp
+
+# gq - Equatorial Guinea
+gq=whois.dominio.gq
+
+# gr - Greece (no whois server)
+
+# gs - South Georgia and the South Sandwich Islands
+gs=whois.nic.gs
+
+# gt - Guatemala (no whois server)
+
+# gu - Guam (web only)
+gu=url:https://give.uog.edu/shop/
+
+# gw - Guinea-Bissau (no whois server)
+
+# gy - Guyana
+gy=whois.registry.gy
+
+# hk - Hong Kong
+hk=whois.hkirc.hk
+
+# hm - Heard Island and McDonald Islands
+hm=whois.registry.hm
+
+# hn - Honduras
+hn=whois.nic.hn
+
+# hr - Croatia
+hr=whois.dns.hr
+
+# ht - Haiti
+ht=whois.nic.ht
+
+# hu - Hungary
+hu=whois.nic.hu
+
+# id - Indonesia
+id=whois.id
+
+# ie - Ireland
+ie=whois.weare.ie
+
+# il - Israel
+il=whois.isoc.org.il
+
+# im - Isle of Man
+im=whois.nic.im
+
+# in - India
+in=whois.nixiregistry.in
+
+# iq - Iraq
+iq=whois.cmc.iq
+
+# ir - Iran, Islamic Republic of
+ir=whois.nic.ir
+
+# is - Iceland (no whois server)
+
+# it - Italy
+it=whois.nic.it
+
+# je - Jersey
+je=whois.je
+
+# jm - Jamaica (no whois server)
+
+# jo - Jordan (web only)
+jo=url:https://www.dns.jo
+
+# jp - Japan
+jp=whois.jprs.jp
+
+# kg - Kyrgyzstan
 kg=whois.kg
 
-# Montenegro
+# kh - Cambodia (no whois server)
+
+# ki - Kiribati
+ki=whois.nic.ki
+
+# km - Comoros (no whois server)
+
+# kn - Saint Kitts and Nevis
+kn=whois.nic.kn
+
+# kp - Korea, Democratic People's Republic (no whois server)
+
+# kr - Korea, Republic of
+kr=whois.kr
+
+# kw - Kuwait (no whois server)
+
+# ky - Cayman Islands
+ky=whois.kyregistry.ky
+
+# kz - Kazakhstan
+kz=whois.nic.kz
+
+# la - Lao People's Democratic Republic
+la=whois.nic.la
+
+# lb - Lebanon
+lb=whois.lbdr.org.lb
+
+# lc - Saint Lucia (no whois server)
+
+# li - Liechtenstein
+li=whois.nic.li
+
+# lk - Sri Lanka (no whois server)
+
+# lr - Liberia (no whois server)
+
+# ls - Lesotho
+ls=whois.nic.ls
+
+# lt - Lithuania
+lt=whois.domreg.lt
+
+# lu - Luxembourg
+lu=whois.dns.lu
+
+# lv - Latvia
+lv=whois.nic.lv
+
+# ly - Libya
+ly=whois.nic.ly
+
+# mc - Monaco
+mc=whois.nic.mc
+
+# md - Moldova, Republic of
+md=whois.nic.md
+
+# me - Montenegro
 me=whois.nic.me
 
-# Russia
-com.ru=whois.reg.ru
+# mg - Madagascar
+mg=whois.nic.mg
+
+# mh - Marshall Islands (no whois server)
+
+# mk - North Macedonia
+mk=whois.marnet.mk
+
+# ml - Mali
+ml=whois.nic.ml
+
+# mm - Myanmar
+mm=whois.registry.gov.mm
+
+# mn - Mongolia
+mn=whois.nic.mn
+
+# mo - Macao
+mo=whois.monic.mo
+
+# mp - Northern Mariana Islands (web only)
+mp=url:https://get.mp/
+
+# mq - Martinique
+mq=whois.mediaserv.net
+
+# mr - Mauritania
+mr=whois.nic.mr
+
+# ms - Montserrat
+ms=whois.nic.ms
+
+# mt - Malta (web only)
+mt=url:https://www.nic.org.mt/
+
+# mu - Mauritius
+mu=whois.tld.mu
+
+# mv - Maldives (no whois server)
+
+# mw - Malawi
+mw=whois.nic.mw
+
+# mx - Mexico
+mx=whois.mx
+
+# my - Malaysia
+my=whois.mynic.my
+
+# mz - Mozambique
+mz=whois.nic.mz
+
+# na - Namibia (no whois server)
+
+# nc - New Caledonia
+nc=whois.nc
+
+# ne - Niger (no whois server)
+
+# nf - Norfolk Island
+nf=whois.nic.nf
+
+# ng - Nigeria
+ng=whois.nic.net.ng
+
+# ni - Nicaragua (no whois server)
+
+# nl - Netherlands
+nl=whois.domain-registry.nl
+
+# no - Norway
+no=whois.norid.no
+
+# np - Nepal (no whois server)
+
+# nr - Nauru (no whois server)
+
+# nu - Niue
+nu=whois.iis.nu
+
+# nz - New Zealand
+nz=whois.irs.net.nz
+
+# om - Oman
+om=whois.registry.om
+
+# pa - Panama (no whois server)
+
+# pe - Peru
+pe=kero.yachay.pe
+
+# pf - French Polynesia
+pf=whois.registry.pf
+
+# pg - Papua New Guinea
+pg=whois.nic.pg
+
+# ph - Philippines (no whois server)
+
+# pk - Pakistan
+pk=whois.pknic.net.pk
+
+# pl - Poland
+pl=whois.dns.pl
+
+# pm - Saint Pierre and Miquelon
+pm=whois.nic.pm
+
+# pn - Pitcairn (web only)
+pn=url:https://nic.pn
+
+# pr - Puerto Rico
+pr=whois.afilias-srs.net
+
+# ps - Palestine, State of (no whois server)
+
+# pt - Portugal
+pt=whois.dns.pt
+
+# pw - Palau
+pw=whois.nic.pw
+
+# py - Paraguay (no whois server)
+
+# qa - Qatar
+qa=whois.registry.qa
+
+# re - Reunion
+re=whois.nic.re
+
+# ro - Romania
+ro=whois.rotld.ro
+
+# rs - Serbia
+rs=whois.rnids.rs
+
+# ru - Russian Federation
+ru=whois.ripn.net
+
+# rw - Rwanda
+rw=whois.ricta.org.rw
+
+# sa - Saudi Arabia
+sa=whois.nic.net.sa
+
+# sb - Solomon Islands
+sb=whois.nic.net.sb
+
+# sc - Seychelles
+sc=whois.nic.sc
+
+# sd - Sudan
+sd=whois.nic.sd
+
+# se - Sweden
+se=whois.iis.se
+
+# sg - Singapore
+sg=whois.sgnic.sg
+
+# sh - Saint Helena, Ascension and Tristan da Cunha
+sh=whois.nic.sh
+
+# si - Slovenia
+si=whois.register.si
+
+# sj - Svalbard and Jan Mayen (web only)
+sj=url:https://www.norid.no/en/omnorid/toppdomenet-sj/
+
+# sk - Slovakia
+sk=whois.sk-nic.sk
+
+# sl - Sierra Leone (web only)
+sl=url:https://www.nic.sl
+
+# sm - San Marino
+sm=whois.nic.sm
+
+# sn - Senegal
+sn=whois.nic.sn
+
+# so - Somalia
+so=whois.nic.so
+
+# sr - Suriname
+sr=whois.sr
+
+# ss - South Sudan
+ss=whois.nic.ss
+
+# st - Sao Tome and Principe
+st=whois.nic.st
+
+# sv - El Salvador (no whois server)
+
+# sx - Sint Maarten (Dutch part)
+sx=whois.sx
+
+# sy - Syrian Arab Republic
+sy=whois.tld.sy
+
+# sz - Eswatini (no whois server)
+
+# tc - Turks and Caicos Islands
+tc=whois.nic.tc
+
+# td - Chad
+td=whois.nic.td
+
+# tf - French Southern Territories
+tf=whois.nic.tf
+
+# tg - Togo
+tg=whois.nic.tg
+
+# th - Thailand
+th=whois.thnic.co.th
+
+# tj - Tajikistan (no whois server)
+
+# tk - Tokelau
+tk=whois.dot.tk
+
+# tl - Timor-Leste
+tl=whois.nic.tl
+
+# tm - Turkmenistan
+tm=whois.nic.tm
+
+# tn - Tunisia
+tn=whois.ati.tn
+
+# to - Tonga
+to=whois.tonicregistry.to
+
+# tr - Turkey
+tr=whois.trabis.gov.tr
+
+# tt - Trinidad and Tobago (no whois server)
+
+# tv - Tuvalu
+tv=whois.nic.tv
+
+# tw - Taiwan, Province of China
+tw=whois.twnic.net.tw
+
+# tz - Tanzania, United Republic of
+tz=whois.tznic.or.tz
+
+# ua - Ukraine
+# Note: Only specific second-level domains are supported
+pp.ua=whois.pp.ua
+
+# ug - Uganda
+ug=whois.co.ug
+
+# uk - United Kingdom
+uk=whois.nic.uk
+
+# um - United States Minor Outlying Islands (no whois server)
+
+# us - United States
+us=whois.nic.us
+
+# uy - Uruguay
+uy=whois.nic.org.uy
+
+# uz - Uzbekistan
+uz=whois.cctld.uz
+
+# va - Holy See (no whois server)
+
+# vc - Saint Vincent and the Grenadines
+vc=whois.identitydigital.services
+
+# ve - Venezuela
+ve=whois.nic.ve
+
+# vg - Virgin Islands, British
+vg=whois.nic.vg
+
+# vi - Virgin Islands, U.S.
+vi=virgil.nic.vi
+
+# vn - Vietnam (web only)
+vn=url:https://www.vnnic.vn/
+
+# vu - Vanuatu
+vu=whois.dnrs.vu
+
+# wf - Wallis and Futuna
+wf=whois.nic.wf
+
+# ws - Samoa
+ws=whois.website.ws
+
+# ye - Yemen
+ye=whois.y.net.ye
+
+# yt - Mayotte
+yt=whois.nic.yt
+
+# za - South Africa (no whois server)
+
+# zm - Zambia
+zm=whois.zicta.zm
+
+# zw - Zimbabwe (no whois server)
+
+# Russia - Second Level Domains
 msk.ru=whois.regtime.net
 net.ru=whois.nic.net.ru
 org.ru=whois.nic.net.ru
 pp.ru=whois.nic.ru
-ru=whois.ripn.net
 sochi.ru=whois.nic.ru
 spb.ru=whois.nic.ru
 
-# Tuvalu
-tv=whois.nic.tv
-
-# Ukraine
-pp.ua=whois.pp.ua
+# io - British Indian Ocean Territory
+io=whois.nic.io
