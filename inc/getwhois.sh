@@ -63,6 +63,17 @@ if [[ -z "$SERVER" ]]; then
         if [[ -n "$_line" ]]; then
             SERVER=${_line#*=}
             SERVER=$(echo "$SERVER" | tr -d '\r')
+        else
+            # 如果二级域名没有匹配，尝试回退到单级 TLD
+            # 例如：org.sz -> sz
+            FALLBACK_TLD=$(echo "$TLD" | sed 's/.*\.//')
+            if [[ "$FALLBACK_TLD" != "$TLD" ]]; then
+                _line=$(grep "^${FALLBACK_TLD}=" "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null | tr -d '\r' || true)
+                if [[ -n "$_line" ]]; then
+                    SERVER=${_line#*=}
+                    SERVER=$(echo "$SERVER" | tr -d '\r')
+                fi
+            fi
         fi
     fi
 

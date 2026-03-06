@@ -634,7 +634,8 @@ tg=whois.nic.tg
 # th - Thailand
 th=whois.thnic.co.th
 
-# tj - Tajikistan (no whois server)
+# tj - Tajikistan (web query)
+tj=url:http://www.nic.tj/cgi/whois2
 
 # tk - Tokelau
 tk=whois.dot.tk
