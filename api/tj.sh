@@ -3,6 +3,7 @@
 # 设置工作目录
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -25,7 +26,7 @@ if [[ -z "$KEYWORD" ]]; then
 fi
 
 # 查询 .TJ 域名的 WHOIS 信息
-RESULT=$(curl -s "http://www.nic.tj/cgi/whois2?domain=${KEYWORD}")
+RESULT=$(__curl_get "http://www.nic.tj/cgi/whois2?domain=${KEYWORD}")
 
 # 检查是否包含 "no records found" 表示域名未注册
 if echo "$RESULT" | grep -qi "no records found"; then

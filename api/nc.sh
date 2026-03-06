@@ -3,6 +3,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -51,11 +52,7 @@ fi
 ENCODED_DOMAIN=$(__escape_url "$DOMAIN_NAME")
 ENCODED_EXT=$(__escape_url "$EXT")
 
-# 查询 .nc whois 接口
-RESULT=$(curl -s "https://www.domaine.nc/whos?domain=${ENCODED_DOMAIN}&ext=${ENCODED_EXT}" \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
-    -H 'Accept-Language: en-US,en;q=0.9' \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+RESULT=$(__curl_get "https://www.domaine.nc/whos?domain=${ENCODED_DOMAIN}&ext=${ENCODED_EXT}")
 
 # 检查是否包含域名信息
 # 新喀里多尼亚 whois 页面会显示域名信息

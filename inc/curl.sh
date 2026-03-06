@@ -266,6 +266,41 @@ __curl_post() {
         -d "$data"
 }
 
+# 执行 HTTP GET 请求并返回状态码
+# 参数:
+#   $1 - URL
+#   $2 - 额外的 curl 参数（可选）
+# 输出: 响应内容 + 换行 + HTTP 状态码
+__curl_get_with_status() {
+    local url="$1"
+    shift
+    local extra_args=("$@")
+
+    # 确保 CA 证书可用
+    if ! __cert_update; then
+        echo "Error: CA certificate not available and download failed." >&2
+        return 1
+    fi
+
+    # 构建 curl 命令
+    local curl_args=(
+        -s
+        -w "\n%{http_code}"
+        --cacert "$__CURL_CERT_FILE"
+        --connect-timeout 10
+        --max-time 30
+    )
+
+    # 添加额外参数
+    [[ ${#extra_args[@]} -gt 0 ]] && curl_args+=("${extra_args[@]}")
+
+    # 添加 URL
+    curl_args+=("$url")
+
+    # 执行请求
+    curl "${curl_args[@]}"
+}
+
 # ============ 公开 API ============
 
 # 手动更新证书（供外部调用）

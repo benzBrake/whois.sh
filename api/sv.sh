@@ -3,6 +3,7 @@
 # 设置工作目录
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -29,18 +30,7 @@ fi
 TARGET_DOMAIN="$DOMAIN"
 
 # 第一步：查询域名状态，获取可能的域名 ID
-STEP1_RESULT=$(curl -s \
-    -X POST \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0' \
-    -H 'Accept: */*' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Origin: https://svnet.sv' \
-    -H 'Connection: keep-alive' \
-    -H 'Referer: https://svnet.sv/' \
-    -d "key=Buscar" \
-    -d "ID=1" \
-    -d "nombre=${KEYWORD}" \
-    "https://svnet.sv/accion/procesos.php")
+STEP1_RESULT=$(__curl_post "https://svnet.sv/accion/procesos.php" "key=Buscar&ID=1&nombre=${KEYWORD}")
 
 # 从返回的 HTML 中查找目标域名
 # 匹配格式: <strong>domain.sv</strong><button ... onClick="Whois(ID)">
@@ -83,17 +73,7 @@ if [[ -z "$DOMAIN_ID" ]]; then
 fi
 
 # 第二步：使用域名 ID 查询 whois 信息
-STEP2_RESULT=$(curl -s \
-    -X POST \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0' \
-    -H 'Accept: */*' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Origin: https://svnet.sv' \
-    -H 'Connection: keep-alive' \
-    -H 'Referer: https://svnet.sv/' \
-    -d "key=Whois" \
-    -d "ID=${DOMAIN_ID}" \
-    "https://svnet.sv/accion/procesos.php")
+STEP2_RESULT=$(__curl_post "https://svnet.sv/accion/procesos.php" "key=Whois&ID=${DOMAIN_ID}")
 
 # HTML 实体解码函数
 html_entity_decode() {

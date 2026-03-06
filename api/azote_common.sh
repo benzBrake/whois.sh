@@ -6,6 +6,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -43,11 +44,7 @@ fi
 # 直接使用域名即可，因为 azote.org 支持简单域名
 ENCODED_DOMAIN=$(echo "$DOMAIN_NAME" | tr -d '\n\r')
 
-# 查询 azote.org 接口
-RESULT=$(curl -s "https://azote.org/verifications-${ENCODED_DOMAIN}.html" \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
-    -H 'Accept-Language: en-US,en;q=0.9' \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+RESULT=$(__curl_get "https://azote.org/verifications-${ENCODED_DOMAIN}.html")
 
 # 提取当前域名状态
 # 搜索包含域名的行

@@ -156,7 +156,7 @@ __rdap_query() {
     local encoded_domain=$(__escape_url "$domain")
 
     if [[ -n "$server" ]]; then
-        curl -s "${server}domain/${encoded_domain}"
+        __curl_get "${server}domain/${encoded_domain}"
     else
         return 1
     fi

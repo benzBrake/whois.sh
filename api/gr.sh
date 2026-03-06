@@ -3,6 +3,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -20,11 +21,7 @@ fi
 # 创建临时 cookie 文件
 COOKIE_FILE=$(mktemp)
 
-# 1. 获取 CSRF token 并保存 cookies（使用英语界面）
-HTML_CONTENT=$(curl -s "https://grweb.ics.forth.gr/public/whois?lang=en" \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
-    -H 'Accept-Language: en-US,en;q=0.9' \
-    -c "$COOKIE_FILE")
+HTML_CONTENT=$(__curl_get "https://grweb.ics.forth.gr/public/whois?lang=en")
 
 # 提取 CSRF token（使用简单可靠的方法）
 CSRF_TOKEN=$(echo "$HTML_CONTENT" | sed -n 's/.*name="_csrf"[[:space:]]*value="\([^"]*\)".*/\1/p' | head -1)
@@ -34,18 +31,7 @@ if [[ -z "$CSRF_TOKEN" ]]; then
     rm -f "$COOKIE_FILE"
     exit 1
 fi
-
-# 2. POST 查询（使用 cookie，跟随重定向，使用英语界面）
-RESULT=$(curl -sL "https://grweb.ics.forth.gr/public/whois/query?lang=en" \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
-    -H 'Accept-Language: en-US,en;q=0.9' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Referer: https://grweb.ics.forth.gr/public/whois?lang=en' \
-    -b "$COOKIE_FILE" \
-    -c "$COOKIE_FILE" \
-    -d "_csrf=${CSRF_TOKEN}&domain=${DOMAIN}&Submit=")
-
-rm -f "$COOKIE_FILE"
+RESULT=$(__curl_post "https://grweb.ics.forth.gr/public/whois/query?lang=en" "_csrf=${CSRF_TOKEN}&domain=${DOMAIN}&Submit=")
 
 # 检查页面是否包含域名数据
 if echo "$RESULT" | grep -qi "${DOMAIN}"; then

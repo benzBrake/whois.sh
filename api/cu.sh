@@ -3,6 +3,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -17,10 +18,7 @@ if ! __validate_domain "$DOMAIN"; then
     exit 1
 fi
 
-# 查询 .cu 官方 whois 网页
-RESULT=$(curl -s "https://www.nic.cu/dom_det.php?domsrch=${DOMAIN}" \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
-    -H 'Connection: keep-alive')
+RESULT=$(__curl_get "https://www.nic.cu/dom_det.php?domsrch=${DOMAIN}")
 
 # 检查页面是否包含实际的域名数据
 if echo "$RESULT" | grep -q "<td.*>.*${DOMAIN}.*</td>"; then

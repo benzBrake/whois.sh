@@ -3,6 +3,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -25,11 +26,7 @@ if [[ -z "$KEYWORD" ]]; then
 fi
 
 # 查询 .bt 官方 whois 网页
-# 域名关键字只包含安全字符，无需 URL 编码
-RESULT=$(curl -s "https://www.nic.bt/search?query=${KEYWORD}&ext=.bt" \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' \
-    -H 'Connection: keep-alive')
+RESULT=$(__curl_get "https://www.nic.bt/search?query=${KEYWORD}&ext=.bt")
 
 # 检查是否包含域名详情信息（说明已注册）
 if echo "$RESULT" | grep -qi "Domain Name :"; then

@@ -114,7 +114,7 @@ if [[ -z "$SERVER" ]]; then
     if [[ -z "$SERVER" ]]; then
         # 使用 URL 编码防止注入
         ENCODED_DOMAIN=$(__escape_url "$DOMAIN")
-        RESULT=$(curl -s "https://www.iana.org/whois?q=${ENCODED_DOMAIN}")
+        RESULT=$(__curl_get "https://www.iana.org/whois?q=${ENCODED_DOMAIN}")
         SERVER=$(echo "$RESULT" | grep "whois:" | sed 's#.* ##' | tr -d ' ')
 
         # 验证从 IANA 获取的服务器地址
@@ -152,7 +152,7 @@ if [[ -n "$SERVER" ]]; then
         # 使用 URL 编码防止注入
         ENCODED_DOMAIN=$(__escape_url "$DOMAIN")
         CURL_URL=${SERVER//%domain%/${ENCODED_DOMAIN}}
-        RESULT=$(curl -sSL "$CURL_URL")
+        RESULT=$(__curl_get "$CURL_URL")
     else
         # 验证端口号
         if ! __validate_port "$PORT"; then

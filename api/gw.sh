@@ -5,6 +5,7 @@
 # 设置工作目录
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -32,7 +33,7 @@ DOMAIN_BASE="${DOMAIN%.gw}"
 API_URL="https://registar.nic.gw/whois/${DOMAIN_BASE}.gw/"
 
 # 发起 HTTP 请求
-HTTP_RESPONSE=$(curl -s -w "\n%{http_code}" "$API_URL" 2>/dev/null)
+HTTP_RESPONSE=$(__curl_get_with_status "$API_URL")
 
 # 分离响应体和状态码
 HTTP_BODY=$(echo "$HTTP_RESPONSE" | head -n -1)

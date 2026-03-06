@@ -2,6 +2,10 @@
 # DNS 查询模块
 # 提供通用的 DNS 查询函数
 
+# 加载依赖
+WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
+
 # ============ DNS 查询函数 ============
 
 # 使用 nslookup 查询 NS 记录
@@ -17,7 +21,7 @@ __dns_query_nslookup() {
 # 返回: JSON 格式的 DNS 响应
 __dns_query_google_api() {
     local domain="$1"
-    curl -s "https://dns.google/resolve?name=${domain}&type=NS" 2>/dev/null
+    __curl_get "https://dns.google/resolve?name=${domain}&type=NS"
 }
 
 # 从 Google DNS API 响应中提取状态

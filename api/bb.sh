@@ -3,6 +3,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -20,15 +21,7 @@ fi
 # 使用 URL 编码防止注入
 ENCODED_DOMAIN=$(__escape_url "$DOMAIN")
 
-# 查询 .bb 官方 whois 网页
-RESULT=$(curl -s 'https://whois.telecoms.gov.bb/search/' \
-    -X POST \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Origin: https://whois.telecoms.gov.bb' \
-    -H 'Referer: https://whois.telecoms.gov.bb/search/' \
-    -H 'Connection: keep-alive' \
-    --data-urlencode "Domain=${DOMAIN}")
+RESULT=$(__curl_post "https://whois.telecoms.gov.bb/search/" "Domain=${DOMAIN}")
 
 # 检查是否显示 "No results found"
 if echo "$RESULT" | grep -qi "No results found"; then

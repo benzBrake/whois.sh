@@ -3,6 +3,7 @@
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 source "$WHOIS_WORKING_DIR/inc/dns.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # 验证参数
 DOMAIN="$1"
@@ -50,11 +51,7 @@ fi
 # 域名只包含字母数字和连字符，不需要 URL 编码
 ENCODED_DOMAIN="$DOMAIN_NAME"
 
-# 查询 .nr whois 接口
-RESULT=$(curl -s "https://www.cenpac.net.nr/dns/whois.html?subdomain=${ENCODED_DOMAIN}&tld=${TLD_PARAM}&whois=Submit" \
-    -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
-    -H 'Accept-Language: en-US,en;q=0.9' \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+RESULT=$(__curl_get "https://www.cenpac.net.nr/dns/whois.html?subdomain=${ENCODED_DOMAIN}&tld=${TLD_PARAM}&whois=Submit")
 
 # 检查是否包含域名信息
 if echo "$RESULT" | grep -q "Domain Name:"; then
