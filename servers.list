@@ -669,6 +669,7 @@ tz=whois.tznic.or.tz
 # ua - Ukraine
 # Note: Only specific second-level domains are supported
 pp.ua=whois.pp.ua
+ua=whois.ua
 
 # ug - Uganda
 ug=whois.co.ug
