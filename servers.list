@@ -654,7 +654,8 @@ to=whois.tonicregistry.to
 # tr - Turkey
 tr=whois.trabis.gov.tr
 
-# tt - Trinidad and Tobago (no whois server)
+# tt - Trinidad and Tobago (web only)
+tt=url:https://www.nic.tt/cgi-bin/search.pl
 
 # tv - Tuvalu
 tv=whois.nic.tv
