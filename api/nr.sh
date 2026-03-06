@@ -58,8 +58,8 @@ RESULT=$(curl -s "https://www.cenpac.net.nr/dns/whois.html?subdomain=${ENCODED_D
 
 # 检查是否包含域名信息
 if echo "$RESULT" | grep -q "Domain Name:"; then
-    echo "# Domain Information for: $DOMAIN"
-    echo "# Source: https://www.cenpac.net.nr/dns/whois.html"
+    echo "Domain Information for: $DOMAIN"
+    echo "Source: https://www.cenpac.net.nr/dns/whois.html"
     echo ""
 
     # 解析 HTML 表格提取域名信息
@@ -158,28 +158,28 @@ if echo "$RESULT" | grep -q "Domain Name:"; then
         }
 
         /Administrative Contact/ {
-            print "\n# Administrative Contact"
+            print "\nAdministrative Contact"
             current_label = ""
             skip_empty = 1
             next
         }
 
         /Technical Contact/ {
-            print "\n# Technical Contact"
+            print "\nTechnical Contact"
             current_label = ""
             skip_empty = 1
             next
         }
 
         /Billing Details/ {
-            print "\n# Billing Details"
+            print "\nBilling Details"
             current_label = ""
             skip_empty = 1
             next
         }
 
         /Registration/ && !/Registration Date:/ {
-            print "\n# Registration"
+            print "\nRegistration"
             current_label = ""
             skip_empty = 1
             next
@@ -233,12 +233,15 @@ if echo "$RESULT" | grep -q "Domain Name:"; then
                 current_label = ""
             } else if (current_label == "addr" && line != "" && line != "NR") {
                 if (addr_count == 0) {
-                    print "Address: " line
+                    addr_str = line
                     addr_count++
                 } else if (line != "") {
-                    print "         " line
+                    addr_str = addr_str " " line
                 }
             } else if (current_label == "city" && line != "") {
+                if (addr_count > 0) {
+                    print "Address: " addr_str
+                }
                 print "City: " line
                 current_label = ""
             } else if (current_label == "country" && line != "") {
@@ -283,14 +286,14 @@ if echo "$RESULT" | grep -q "Domain Name:"; then
     __dns_query_ns_simple "$DOMAIN"
 else
     # 没有查询到 whois 信息
-    echo "# ========================================"
-    echo "# No whois information found for $DOMAIN"
-    echo "# Possible reasons:"
-    echo "#   1. Domain is available for registration"
-    echo "#   2. Domain information is hidden/protected"
-    echo "#   3. The registry website may be unavailable"
-    echo "# Please verify at: https://www.cenpac.net.nr/dns/whois.html"
-    echo "# ========================================"
+    echo "========================================"
+    echo "No whois information found for $DOMAIN"
+    echo "Possible reasons:"
+    echo "  1. Domain is available for registration"
+    echo "  2. Domain information is hidden/protected"
+    echo "  3. The registry website may be unavailable"
+    echo "Please verify at: https://www.cenpac.net.nr/dns/whois.html"
+    echo "========================================"
     echo ""
 
     __dns_query_ns_smart "$DOMAIN"
