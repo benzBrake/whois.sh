@@ -609,7 +609,8 @@ ss=whois.nic.ss
 # st - Sao Tome and Principe
 st=whois.nic.st
 
-# sv - El Salvador (no whois server)
+# sv - El Salvador (handled by api/sv.sh script)
+sv=illigle
 
 # sx - Sint Maarten (Dutch part)
 sx=whois.sx

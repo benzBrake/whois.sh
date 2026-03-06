@@ -102,6 +102,14 @@ if [[ -z "$SERVER" ]]; then
         exit 0
     fi
 
+    # 特殊处理：.sv (El Salvador) 域名使用自定义 API 脚本
+    if [[ "$TLD" == "sv" ]]; then
+        if [[ -f "$WHOIS_WORKING_DIR/api/sv.sh" ]]; then
+            "$WHOIS_WORKING_DIR/api/sv.sh" "$DOMAIN"
+            exit $?
+        fi
+    fi
+
     # 如果没有找到服务器，从 IANA 查询
     if [[ -z "$SERVER" ]]; then
         # 使用 URL 编码防止注入
