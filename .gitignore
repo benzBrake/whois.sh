@@ -1,1 +1,7 @@
 /prefix.list
+
+# CA certificates (auto-downloaded)
+/data/cacert.pem
+/data/cacert.version
+/data/cacert.check
+/data/cacert.pem.tmp
