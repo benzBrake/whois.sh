@@ -192,30 +192,51 @@ __rdap_parse() {
     local json="$1"
 
     # 检查 jq 是否可用
-    if ! command -v jq &>/dev/null; then
-        echo "Error: jq is required for RDAP parsing. Please install jq." >&2
-        return 1
+    if command -v jq &>/dev/null; then
+        # 使用 jq 解析并格式化输出
+        echo "$json" | jq -r '
+            # 基本信息
+            if .ldhName then "DOMAIN: \(.ldhName)" else empty end,
+            if .handle then "Registry ID: \(.handle)" else empty end,
+
+            # 状态
+            if .status then "Status: \([.status[] | tostring] | join(", "))" else empty end,
+
+            # 事件时间
+            (.events[]? | select(.eventAction == "registration") | "Created: \(.eventDate)"),
+            (.events[]? | select(.eventAction == "last changed") | "Updated: \(.eventDate)"),
+            (.events[]? | select(.eventAction == "expiration") | "Expires: \(.eventDate)"),
+
+            # 名称服务器
+            if .nameservers then "Nameservers:",
+                (.nameservers[]? | "  \(.ldhName)")
+            else empty end
+        ' | grep -v '^$'
+    else
+        # jq 不可用时的降级处理：使用简单解析并显示原始 JSON
+        local domain=$(__json_value "$json" "ldhName")
+        local handle=$(__json_value "$json" "handle")
+
+        [[ -n "$domain" ]] && echo "DOMAIN: $domain"
+        [[ -n "$handle" ]] && echo "Registry ID: $handle"
+
+        # 提取状态（简单方法）
+        local statuses=$(echo "$json" | grep -o '"status"[[:space:]]*:[[:space:]]*\[[^]]*\]' | head -1 | sed 's/.*\[\(.*\)\].*/\1/' | tr -d '"' | tr ',' ', ')
+        [[ -n "$statuses" ]] && echo "Status: $statuses"
+
+        # 提取名称服务器
+        local nameservers=$(echo "$json" | grep -o '"ldhName"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -v '"ldhName"[[:space:]]*:[[:space:]]*"'$domain'"' | sed 's/.*"ldhName"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' | head -5)
+        if [[ -n "$nameservers" ]]; then
+            echo "Nameservers:"
+            echo "$nameservers" | while read -r ns; do
+                [[ -n "$ns" ]] && echo "  $ns"
+            done
+        fi
+
+        # 提示安装 jq 以获得更好的输出
+        echo "" >&2
+        echo "Note: Install 'jq' for formatted RDAP output." >&2
     fi
-
-    # 使用 jq 解析并格式化输出
-    echo "$json" | jq -r '
-        # 基本信息
-        if .ldhName then "DOMAIN: \(.ldhName)" else empty end,
-        if .handle then "Registry ID: \(.handle)" else empty end,
-
-        # 状态
-        if .status then "Status: \([.status[] | tostring] | join(", "))" else empty end,
-
-        # 事件时间
-        (.events[]? | select(.eventAction == "registration") | "Created: \(.eventDate)"),
-        (.events[]? | select(.eventAction == "last changed") | "Updated: \(.eventDate)"),
-        (.events[]? | select(.eventAction == "expiration") | "Expires: \(.eventDate)"),
-
-        # 名称服务器
-        if .nameservers then "Nameservers:",
-            (.nameservers[]? | "  \(.ldhName)")
-        else empty end
-    ' | grep -v '^$'
 }
 # 查找 API 脚本，支持多级后缀（如 .asso.st, .fr.nf）
 # 优先尝试完整后缀，然后回退到单级 TLD

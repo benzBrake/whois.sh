@@ -5,6 +5,7 @@
 # 加载依赖
 WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
 
 # RDAP 查询函数
 rdap_query() {
@@ -35,19 +36,29 @@ rdap_query() {
         return 1
     fi
 
-    # 检查是否为错误响应（使用 jq）
-    if command -v jq &>/dev/null; then
-        local error_code=$(echo "$rdap_json" | jq -r '.errorCode // empty')
-        if [[ -n "$error_code" ]]; then
-            local error_title=$(echo "$rdap_json" | jq -r '.title // "Unknown error"')
-            echo "Error ${error_code}: ${error_title}" >&2
+    # 检查是否为错误响应
+    local error_code=""
+    local error_title=""
 
-            # 404 表示域名可能可用
-            if [[ "$error_code" == "404" ]]; then
-                echo "Status: available"
-            fi
-            return 1
+    if command -v jq &>/dev/null; then
+        error_code=$(echo "$rdap_json" | jq -r '.errorCode // empty')
+        error_title=$(echo "$rdap_json" | jq -r '.title // "Unknown error"')
+    else
+        # 降级：使用 grep 检测 errorCode
+        if echo "$rdap_json" | grep -q '"errorCode"'; then
+            error_code=$(echo "$rdap_json" | grep -o '"errorCode"[[:space:]]*:[[:space:]]*[0-9]*' | grep -o '[0-9]*$')
+            error_title=$(echo "$rdap_json" | grep -o '"title"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*"title"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
         fi
+    fi
+
+    if [[ -n "$error_code" ]]; then
+        echo "Error ${error_code}: ${error_title}" >&2
+
+        # 404 表示域名可能可用
+        if [[ "$error_code" == "404" ]]; then
+            echo "Status: available"
+        fi
+        return 1
     fi
 
     # 解析并输出 whois 格式结果
