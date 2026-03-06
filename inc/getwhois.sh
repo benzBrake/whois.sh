@@ -58,8 +58,8 @@ if [[ -z "$SERVER" ]]; then
     DOMAIN=$(echo "$DOMAIN" | sed "s/.$TLD//" | sed 's/.*\.//g').$TLD
 
     # 从本地缓存读取服务器（兼容 Windows CRLF 和 Unix LF）
-    if [[ -f "$WHOIS_WORKING_DIR/servers.list" ]]; then
-        _line=$(grep "^${TLD}=" "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null | tr -d '\r' || true)
+    if [[ -f "$WHOIS_WORKING_DIR/data/servers.list" ]]; then
+        _line=$(grep "^${TLD}=" "$WHOIS_WORKING_DIR/data/servers.list" 2>/dev/null | tr -d '\r' || true)
         if [[ -n "$_line" ]]; then
             SERVER=${_line#*=}
             SERVER=$(echo "$SERVER" | tr -d '\r')
@@ -68,7 +68,7 @@ if [[ -z "$SERVER" ]]; then
             # 例如：org.sz -> sz
             FALLBACK_TLD=$(echo "$TLD" | sed 's/.*\.//')
             if [[ "$FALLBACK_TLD" != "$TLD" ]]; then
-                _line=$(grep "^${FALLBACK_TLD}=" "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null | tr -d '\r' || true)
+                _line=$(grep "^${FALLBACK_TLD}=" "$WHOIS_WORKING_DIR/data/servers.list" 2>/dev/null | tr -d '\r' || true)
                 if [[ -n "$_line" ]]; then
                     SERVER=${_line#*=}
                     SERVER=$(echo "$SERVER" | tr -d '\r')
@@ -120,8 +120,8 @@ if [[ -z "$SERVER" ]]; then
         # 验证从 IANA 获取的服务器地址
         if [[ -n "$SERVER" ]] && __validate_hostname "$SERVER"; then
             # 安全地写入文件（验证路径）
-            if __validate_filepath "$WHOIS_WORKING_DIR/servers.list"; then
-                echo "${TLD}=${SERVER}" >> "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null || true
+            if __validate_filepath "$WHOIS_WORKING_DIR/data/servers.list"; then
+                echo "${TLD}=${SERVER}" >> "$WHOIS_WORKING_DIR/data/servers.list" 2>/dev/null || true
             fi
         else
             SERVER=""
@@ -166,8 +166,8 @@ else
     # 没有找到 whois 服务器
     if [[ -z "$REG_URL" ]]; then
         # 标记为非法域名
-        if __validate_filepath "$WHOIS_WORKING_DIR/servers.list"; then
-            echo "${TLD}=illigle" >> "$WHOIS_WORKING_DIR/servers.list" 2>/dev/null || true
+        if __validate_filepath "$WHOIS_WORKING_DIR/data/servers.list"; then
+            echo "${TLD}=illigle" >> "$WHOIS_WORKING_DIR/data/servers.list" 2>/dev/null || true
         fi
         echo "Error: This domain TLD is not supported or illegal." >&2
     else

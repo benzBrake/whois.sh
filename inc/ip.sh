@@ -27,14 +27,14 @@ RESULT=$("$SCRIPT_DIR/tcp.sh" -host "whois.iana.org" -port "43" -data "$DOMAIN")
 PREFIX=$(echo "$DOMAIN" | sed 's#\..*##')
 
 # 确保缓存文件存在
-if [[ ! -e "${PROJECT_ROOT}/prefix.list" ]]; then
-    touch "${PROJECT_ROOT}/prefix.list" 2>/dev/null || true
+if [[ ! -e "${PROJECT_ROOT}/data/prefix.list" ]]; then
+    touch "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null || true
 fi
 
 # 从缓存读取处理器
 HANDLER=""
-if [[ -f "${PROJECT_ROOT}/prefix.list" ]]; then
-    HANDLER=$(grep "PREFIX${PREFIX}=" "${PROJECT_ROOT}/prefix.list" 2>/dev/null | sed "s#^.*=##" || echo "")
+if [[ -f "${PROJECT_ROOT}/data/prefix.list" ]]; then
+    HANDLER=$(grep "PREFIX${PREFIX}=" "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null | sed "s#^.*=##" || echo "")
 fi
 
 # 如果没有缓存，从结果中提取
@@ -52,8 +52,8 @@ if [[ -z "$HANDLER" ]]; then
     fi
 
     # 安全地写入缓存
-    if __validate_filepath "${PROJECT_ROOT}/prefix.list" 2>/dev/null; then
-        echo "PREFIX${PREFIX}=${HANDLER}" >> "${PROJECT_ROOT}/prefix.list" 2>/dev/null || true
+    if __validate_filepath "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null; then
+        echo "PREFIX${PREFIX}=${HANDLER}" >> "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null || true
     fi
 fi
 

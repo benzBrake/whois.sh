@@ -1,4 +1,4 @@
-/prefix.list
+/data/prefix.list
 
 # CA certificates (auto-downloaded)
 /data/cacert.pem

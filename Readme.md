@@ -16,7 +16,9 @@ A light weight whois tools written by shell.
 whois.sh/
 ├── whois.sh              # Main entry script
 ├── whois.sh.env          # Environment configuration
-├── servers.list          # TLD to WHOIS server mapping (730+ TLDs supported)
+├── data/                 # Data files directory
+│   ├── servers.list      # TLD to WHOIS server mapping (730+ TLDs supported)
+│   └── cacert.pem        # CA certificates (auto-downloaded)
 ├── api/                  # Custom API scripts for special TLDs
 │   ├── al.sh            # .al domain (Albania)
 │   ├── asso.st.sh       # .asso.st domain
