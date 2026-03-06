@@ -718,7 +718,11 @@ ye=whois.y.net.ye
 # yt - Mayotte
 yt=whois.nic.yt
 
-# za - South Africa (no whois server)
+# za - South Africa
+co.za=coza-whois.registry.net.za
+web.za=web-whois.registry.net.za
+org.za=org-whois.registry.net.za
+net.za=net-whois.registry.net.za
 
 # zm - Zambia
 zm=whois.zicta.zm
