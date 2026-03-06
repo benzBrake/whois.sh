@@ -588,8 +588,8 @@ sj=url:https://www.norid.no/en/omnorid/toppdomenet-sj/
 # sk - Slovakia
 sk=whois.sk-nic.sk
 
-# sl - Sierra Leone (web only)
-sl=url:https://www.nic.sl
+# sl - Sierra Leone
+sl=whois.nic.sl
 
 # sm - San Marino
 sm=whois.nic.sm
