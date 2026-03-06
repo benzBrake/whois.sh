@@ -524,8 +524,8 @@ pl=whois.dns.pl
 # pm - Saint Pierre and Miquelon
 pm=whois.nic.pm
 
-# pn - Pitcairn (web only)
-pn=url:https://nic.pn
+# pn - Pitcairn
+pn=rdap://rdap.nominet.uk/pn/
 
 # pr - Puerto Rico
 pr=whois.afilias-srs.net
@@ -679,7 +679,7 @@ ua=whois.ua
 ug=whois.co.ug
 
 # uk - United Kingdom
-uk=whois.nic.uk
+uk=rdap://rdap.nominet.uk/uk/
 
 # um - United States Minor Outlying Islands (no whois server)
 
