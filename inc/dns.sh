@@ -128,3 +128,44 @@ __dns_query_with_url_hint() {
 
     __dns_query_ns_smart "$domain"
 }
+
+# 使用指定的 NS 服务器查询域名 NS 记录
+# 参数: $1 - 域名, $2 - 指定的 NS 服务器
+# 输出格式:
+#   提示信息
+#   空行
+#   DNS 查询结果
+__dns_query_via_ns() {
+    local domain="$1"
+    local ns_server="$2"
+
+    echo "# ========================================"
+    echo "# NOTE: This TLD does not provide a standard whois service"
+    echo "# Querying the registry's authoritative nameserver: $ns_server"
+    echo "# Please refer to the official registry website for accurate information"
+    echo "# ========================================"
+    echo ""
+
+    # 使用指定的 NS 服务器进行 DNS 查询
+    local ns_output
+    ns_output=$(nslookup -type=ns "$domain" "$ns_server" 2>/dev/null | grep -i "nameserver" | awk '{print $NF}')
+
+    if [[ -n "$ns_output" ]]; then
+        echo "STATUS: registered (DNS records found)"
+        echo ""
+        echo "Nameservers:"
+        echo "$ns_output" | while read -r ns; do
+            [[ -n "$ns" ]] && echo "  $ns"
+        done
+    else
+        # 可能域名不存在，检查是否为 NXDOMAIN 响应
+        local check_result
+        check_result=$(nslookup "$domain" "$ns_server" 2>/dev/null | grep -i "NXDOMAIN")
+
+        if [[ -n "$check_result" ]]; then
+            echo "STATUS: available (domain not found)"
+        else
+            echo "STATUS: unknown (unable to determine)"
+        fi
+    fi
+}

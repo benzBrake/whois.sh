@@ -617,7 +617,9 @@ sx=whois.sx
 # sy - Syrian Arab Republic
 sy=whois.tld.sy
 
-# sz - Eswatini (no whois server)
+# sz - Eswatini (no whois server, using authoritative NS)
+# Uses ns: prefix to query via the registry's authoritative nameserver
+sz=ns:ns1.sispa.org.sz
 
 # tc - Turks and Caicos Islands
 tc=whois.nic.tc

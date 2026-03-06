@@ -93,6 +93,15 @@ if [[ -z "$SERVER" ]]; then
         exit 0
     fi
 
+    # 检查是否为 NS 格式（使用指定的 NS 服务器查询）
+    if [[ "$SERVER" == ns:* ]]; then
+        NS_SERVER="${SERVER#ns:}"
+        # 使用指定的 NS 服务器进行 DNS 查询
+        source "$WHOIS_WORKING_DIR/inc/dns.sh"
+        __dns_query_via_ns "$DOMAIN" "$NS_SERVER"
+        exit 0
+    fi
+
     # 如果没有找到服务器，从 IANA 查询
     if [[ -z "$SERVER" ]]; then
         # 使用 URL 编码防止注入
