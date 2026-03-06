@@ -56,6 +56,26 @@ if [[ -n "$AVAILABLE_CHECK" ]]; then
     exit 0
 fi
 
+# 检查是否为保留域名
+RESERVED_CHECK=$(echo "$STEP1_RESULT" | grep -i "es reservado por SVNet")
+if [[ -n "$RESERVED_CHECK" ]]; then
+    # 提取保留信息并清理格式
+    RESERVED_MSG=$(echo "$STEP1_RESULT" | grep -oP 'Este nombre de dominio:.*?es reservado[^<]*' | sed 's/<[^>]*>//g; s/[[:space:]]\+/ /g; s/^[[:space:]]//; s/[[:space:]]$//')
+    if [[ -n "$RESERVED_MSG" ]]; then
+        html_entity_decode() {
+            local text="$1"
+            text=$(echo "$text" | sed 's/&aacute;/á/g; s/&eacute;/é/g; s/&iacute;/í/g; s/&oacute;/ó/g; s/&uacute;/ú/g')
+            text=$(echo "$text" | sed 's/&ntilde;/ñ/g; s/&Ntilde;/Ñ/g')
+            text=$(echo "$text" | sed 's/&amp;/\&/g')
+            echo "$text"
+        }
+        echo "$(html_entity_decode "$RESERVED_MSG")"
+    else
+        echo "Status: reserved (domain name is reserved by SVNet)"
+    fi
+    exit 0
+fi
+
 if [[ -z "$DOMAIN_ID" ]]; then
     # 未找到域名 ID，可能域名不存在或查询失败
     echo "Status: unknown (domain not found in registry)"
