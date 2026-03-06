@@ -103,8 +103,8 @@ __validate_hostname() {
 # 安全转义字符串用于 URL
 __escape_url() {
     local string="$1"
-    echo "$string" | perl -MURI::Escape -ne 'print uri_escape($_)' 2>/dev/null || \
-    echo "$string" | sed 's/[^a-zA-Z0-9._-]/%&/g' | sed 's/% /+/g'
+    printf '%s' "$string" | perl -MURI::Escape -ne 'print uri_escape($_)' 2>/dev/null || \
+    printf '%s' "$string" | sed 's/[^a-zA-Z0-9._-]/%&/g' | sed 's/% /+/g'
 }
 
 # 验证文件路径安全（防止路径遍历）
