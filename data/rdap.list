@@ -1,0 +1,13 @@
+# RDAP (Registration Data Access Protocol) 服务器列表
+# 使用 RDAP 协议查询域名信息，优先于传统 WHOIS 协议
+
+# Google Registry (Charleston Road Registry)
+app=rdap://pubapi.registry.google/rdap/
+dev=rdap://pubapi.registry.google/rdap/
+how=rdap://pubapi.registry.google/rdap/
+page=rdap://pubapi.registry.google/rdap/
+soy=rdap://pubapi.registry.google/rdap/
+
+# Nominet (英国注册局)
+pn=rdap://rdap.nominet.uk/pn/
+uk=rdap://rdap.nominet.uk/uk/
