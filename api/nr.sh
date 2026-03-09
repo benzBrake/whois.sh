@@ -280,7 +280,7 @@ if echo "$RESULT" | grep -q "Domain Name:"; then
         ' | head -50
 
     echo ""
-    __dns_query_ns_simple "$DOMAIN"
+    __dns_query_ns_smart "$DOMAIN"
 else
     # 没有查询到 whois 信息
     echo "========================================"

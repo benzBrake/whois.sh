@@ -37,7 +37,7 @@ if echo "$RESULT" | grep -qi "Domain Name :"; then
         sed 's/^[[:space:]]*//'
 
     echo ""
-    __dns_query_ns_simple "$DOMAIN"
+    __dns_query_ns_smart "$DOMAIN"
 else
     # 没有查询到 whois 信息
     # 尝试 DNS 查询判断域名状态

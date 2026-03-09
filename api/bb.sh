@@ -34,7 +34,7 @@ else
     if [[ -n "$TABLE_CONTENT" ]]; then
         echo "$TABLE_CONTENT"
         echo ""
-        __dns_query_ns_simple "$DOMAIN"
+        __dns_query_ns_smart "$DOMAIN"
     else
         # 无法解析，返回原始响应中的关键信息
         echo "$RESULT" | grep -i "domain\|status\|registrant\|nameserver" | head -20

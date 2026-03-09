@@ -39,7 +39,7 @@ if [[ "$REGISTERED" == "true" ]]; then
     echo "# Source: https://cw.whois.testing.za.net"
     echo ""
     echo "STATUS: registered"
-    __dns_query_ns_simple "$DOMAIN"
+    __dns_query_ns_smart "$DOMAIN"
 else
     echo "# ========================================"
     echo "# Domain $DOMAIN is available for registration"

@@ -80,12 +80,16 @@ if [[ "$DOMAIN_STATUS" == "Pris" ]]; then
     echo "# This domain is already registered (Pris = Taken)"
     echo ""
 
-    # 尝试 DNS 查询获取更多信息
-    __dns_query_ns_simple "$DOMAIN"
+    # 尝试 DNS 查询获取更多信息（优先使用 Google DNS API）
+    __dns_query_ns_smart "$DOMAIN"
 else
     echo "Status: AVAILABLE"
     echo "Domain: $DOMAIN"
     echo ""
     echo "# This domain is available for registration (Libre = Free)"
     echo "# Register at: https://azote.org/enregistrer-${ENCODED_DOMAIN}${EXT}.html"
+    echo ""
+
+    # 查询 NS 记录（可能域名已被注册但网站未更新，优先使用 Google DNS API）
+    __dns_query_ns_smart "$DOMAIN"
 fi
