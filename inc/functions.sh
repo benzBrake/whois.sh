@@ -61,7 +61,18 @@ __validate_domain() {
 # 验证 IP 地址格式（IPv4）
 __validate_ip() {
     local ip="$1"
+    local octet
+    local octets
+
     [[ "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] || return 1
+
+    IFS='.' read -r -a octets <<< "$ip"
+    for octet in "${octets[@]}"; do
+        if (( 10#$octet > 255 )); then
+            return 1
+        fi
+    done
+
     return 0
 }
 
@@ -70,10 +81,16 @@ __validate_ip() {
 # 验证 IPv6 地址格式
 __validate_ipv6() {
     local ip="$1"
+    local part
+    local IFS=':'
+
     # 简化的 IPv6 验证：检查是否包含冒号且符合基本格式
     [[ "$ip" =~ : ]] || return 1
     # 检查是否只包含合法的 IPv6 字符（0-9, a-f, A-F, :）
     [[ "$ip" =~ ^[0-9a-fA-F:]+$ ]] || return 1
+    [[ "$ip" =~ ^::: ]] && return 1
+    [[ "$ip" =~ ::: ]] && return 1
+    [[ "$ip" =~ :::$ ]] && [[ "$ip" != "::" ]] && return 1
     # 排除连续的冒号（除非是 :: 缩写）
     local consecutive_colons=$(echo "$ip" | grep -o '::' | wc -l)
     if [[ $consecutive_colons -gt 1 ]]; then
@@ -81,6 +98,12 @@ __validate_ipv6() {
     fi
     # 排除 ::: 或更多连续冒号
     [[ "$ip" =~ :::: ]] && return 1
+
+    for part in $ip; do
+        [[ -z "$part" ]] && continue
+        [[ ${#part} -le 4 ]] || return 1
+    done
+
     return 0
 }
 __validate_port() {
