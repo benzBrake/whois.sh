@@ -5,14 +5,26 @@ while [[ $# -gt 0 && $1 =~ ^- ]]; do
     key="$1"
     case "$key" in
         -host|--host)
+            if [[ $# -lt 2 || "$2" =~ ^- ]]; then
+                echo "Error: Missing value for $1." >&2
+                exit 1
+            fi
             HOST="$2"
             shift 2
             ;;
         -port|--port)
+            if [[ $# -lt 2 || "$2" =~ ^- ]]; then
+                echo "Error: Missing value for $1." >&2
+                exit 1
+            fi
             PORT="$2"
             shift 2
             ;;
         -data|--data)
+            if [[ $# -lt 2 || "$2" =~ ^- ]]; then
+                echo "Error: Missing value for $1." >&2
+                exit 1
+            fi
             DATA="$2"
             shift 2
             ;;
@@ -24,16 +36,19 @@ done
 
 # 验证必需参数
 if [[ -z "$HOST" || -z "$PORT" || -z "$DATA" ]]; then
+    echo "Error: Missing host, port, or data." >&2
     exit 1
 fi
 
 # 验证主机名
 if ! __validate_hostname "$HOST" 2>/dev/null; then
+    echo "Error: Invalid host." >&2
     exit 1
 fi
 
 # 验证端口号
 if ! __validate_port "$PORT" 2>/dev/null; then
+    echo "Error: Invalid port." >&2
     exit 1
 fi
 
@@ -43,20 +58,20 @@ if ! __validate_domain "$DATA" 2>/dev/null; then
     if ! __validate_ip "$DATA" 2>/dev/null; then
         # 允许 IPv6 地址
         if ! __validate_ipv6 "$DATA" 2>/dev/null; then
+            echo "Error: Invalid query data." >&2
             exit 1
         fi
     fi
 fi
 
 # 安全的 TCP 连接
-while :; do
-    ID=$((RANDOM % (1023 - 9 + 1) + 9))
-    # 使用安全的变量引用
-    if exec {ID}<>/dev/tcp/"$HOST"/"$PORT" 2>/dev/null; then
-        echo -e "${DATA}\r\n" >&"$ID"
-        cat <&"$ID"
-        exec {ID}<&-
-        exec {ID}>&-
-    fi
-    break
-done
+if { exec {ID}<>/dev/tcp/"$HOST"/"$PORT"; } 2>/dev/null; then
+    echo -e "${DATA}\r\n" >&"$ID"
+    cat <&"$ID"
+    exec {ID}<&-
+    exec {ID}>&-
+    exit 0
+fi
+
+echo "Error: Unable to connect to ${HOST}:${PORT}." >&2
+exit 1
