@@ -3,19 +3,35 @@
 test -z "$WHOIS_WORKING_DIR" && WHOIS_WORKING_DIR=$(dirname "$0")
 source "$WHOIS_WORKING_DIR/inc/functions.sh"
 
+SERVER="${SERVER:-}"
+PORT="${PORT:-43}"
+IANA="${IANA:-}"
+
 # 安全的参数解析（移除危险的 eval）
 while [[ $# -gt 0 && $1 =~ ^- ]]; do
     key="$1"
     case "$key" in
         -h|-H|-host|--host)
+            if [[ $# -lt 2 || "$2" =~ ^- ]]; then
+                echo "Error: Missing value for $1." >&2
+                exit 1
+            fi
             SERVER="$2"
             shift 2
             ;;
         -p|-P|-port|--port)
+            if [[ $# -lt 2 || "$2" =~ ^- ]]; then
+                echo "Error: Missing value for $1." >&2
+                exit 1
+            fi
             PORT="$2"
             shift 2
             ;;
         -i|-I|-iana|--iana)
+            if [[ $# -lt 2 || "$2" =~ ^- ]]; then
+                echo "Error: Missing value for $1." >&2
+                exit 1
+            fi
             IANA="$2"
             shift 2
             ;;
@@ -29,9 +45,6 @@ done
 
 # 剩余参数作为域名
 DOMAIN="$*"
-
-# 设置默认值
-PORT="${PORT:-43}"
 
 # 处理 IANA 查询
 if [[ -n "$IANA" ]]; then
@@ -98,12 +111,30 @@ fi
 
 if [[ -n "$DOMAIN" ]]; then
     if [[ "$IPV4" == "$DOMAIN" ]]; then
-        # IPv4 地址查询
-        "$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
+        if [[ -n "$SERVER" ]]; then
+            if ! RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "$SERVER" -port "$PORT" -data "$DOMAIN"); then
+                exit 1
+            fi
+            echo -e "$RESULT"
+        else
+            # IPv4 地址查询
+            "$WHOIS_WORKING_DIR/inc/ip.sh" "$DOMAIN"
+        fi
+        exit $?
     elif [[ "$IPV6" == "$DOMAIN" ]]; then
+        if [[ -n "$SERVER" ]]; then
+            if ! RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "$SERVER" -port "$PORT" -data "$DOMAIN"); then
+                exit 1
+            fi
+            echo -e "$RESULT"
+            exit $?
+        fi
+
         # IPv6 地址查询
         # 从 IANA 查询 whois 服务器
-        RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "whois.iana.org" -port "43" -data "$DOMAIN")
+        if ! RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "whois.iana.org" -port "43" -data "$DOMAIN"); then
+            exit 1
+        fi
         
         # 提取 whois 服务器
         HANDLER=$(echo -e "$RESULT" | grep 'whois:' | sed 's#^[^ ]* *##' | tr -d ' ')
@@ -114,16 +145,20 @@ if [[ -n "$DOMAIN" ]]; then
         fi
         
         # 查询 IPv6 whois 信息
-        RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "$HANDLER" -port "43" -data "$DOMAIN")
+        if ! RESULT=$("$WHOIS_WORKING_DIR/inc/tcp.sh" -host "$HANDLER" -port "43" -data "$DOMAIN"); then
+            exit 1
+        fi
         echo -e "$RESULT"
+        exit $?
     else
         # 域名查询
         if [[ -z "$SERVER" ]]; then
             # 使用内置 whois 顺序
             TLD=$(__get_tld "$DOMAIN")
-            if [[ -f "${WHOIS_WORKING_DIR}/api/${TLD}.sh" ]]; then
+            API_SCRIPT=$(__find_api_script "$DOMAIN" "${WHOIS_WORKING_DIR}/api")
+            if [[ -n "$API_SCRIPT" ]]; then
                 # 优先使用 API
-                RESULT=$("${WHOIS_WORKING_DIR}/api/${TLD}.sh" "$DOMAIN")
+                RESULT=$("${WHOIS_WORKING_DIR}/api/${API_SCRIPT}" "$DOMAIN")
             else
                 # 使用标准 whois 查询
                 RESULT=$("$__WHOIS_BIN" "$DOMAIN")
