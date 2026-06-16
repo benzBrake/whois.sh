@@ -21,7 +21,7 @@ fi
 # 使用 URL 编码防止注入
 ENCODED_DOMAIN=$(__escape_url "$DOMAIN")
 
-RESULT=$(__curl_get "https://cw.whois.testing.za.net/api/check?domain=${ENCODED_DOMAIN}")
+RESULT=$(__curl_get "https://cwhois.gigalixirapp.com/api/check?domain=${ENCODED_DOMAIN}")
 
 # 检查 API 响应是否有效
 if ! echo "$RESULT" | grep -q '"registered"'; then
@@ -36,14 +36,14 @@ REGISTERED=$(echo "$RESULT" | grep -o '"registered":[^,}]*' | cut -d':' -f2)
 if [[ "$REGISTERED" == "true" ]]; then
     # 域名已注册，提取详细信息
     echo "# Domain Information for: $DOMAIN"
-    echo "# Source: https://cw.whois.testing.za.net"
+    echo "# Source: https://cwhois.gigalixirapp.com"
     echo ""
     echo "STATUS: registered"
     __dns_query_ns_smart "$DOMAIN"
 else
     echo "# ========================================"
     echo "# Domain $DOMAIN is available for registration"
-    echo "# Source: https://cw.whois.testing.za.net"
+    echo "# Source: https://cwhois.gigalixirapp.com"
     echo "# Note: Data is periodically synced from official registry,"
     echo "#       availability is not guaranteed."
     echo "# ========================================"
