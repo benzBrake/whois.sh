@@ -31,30 +31,22 @@ if [[ ! -e "${PROJECT_ROOT}/data/prefix.list" ]]; then
     touch "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null || true
 fi
 
-# 从缓存读取处理器
-HANDLER=""
-if [[ -f "${PROJECT_ROOT}/data/prefix.list" ]]; then
+# 优先使用 IANA referral，避免旧缓存把前缀导向错误的 RIR。
+HANDLER=$(echo -e "$RESULT" | grep 'whois:' | sed 's#^[^ ]* *##' | tr -d ' ')
+
+if [[ -z "$HANDLER" && -f "${PROJECT_ROOT}/data/prefix.list" ]]; then
     HANDLER=$(grep "PREFIX${PREFIX}=" "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null | sed "s#^.*=##" || echo "")
 fi
 
-# 如果没有缓存，从结果中提取
 if [[ -z "$HANDLER" ]]; then
-    HANDLER=$(echo -e "$RESULT" | grep 'whois:' | sed 's#^[^ ]* *##' | tr -d ' ')
+    echo "Error: This IP address is not supported." >&2
+    exit 1
+fi
 
-    if [[ -z "$HANDLER" ]]; then
-        echo "Error: This IP address is not supported." >&2
-        exit 1
-    fi
-
-    # ARIN 的特殊处理
-    if [[ "$HANDLER" == "whois.arin.net" ]]; then
-        HANDLER="whois.apnic.net"
-    fi
-
-    # 安全地写入缓存
-    if __validate_filepath "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null; then
-        echo "PREFIX${PREFIX}=${HANDLER}" >> "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null || true
-    fi
+if __validate_filepath "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null; then
+    sed -i.bak "/^PREFIX${PREFIX}=/d" "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null || true
+    rm -f "${PROJECT_ROOT}/data/prefix.list.bak" 2>/dev/null || true
+    echo "PREFIX${PREFIX}=${HANDLER}" >> "${PROJECT_ROOT}/data/prefix.list" 2>/dev/null || true
 fi
 
 # 使用安全的参数传递调用 tcp.sh

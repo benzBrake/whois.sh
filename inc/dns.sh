@@ -43,7 +43,7 @@ __dns_google_extract_ns() {
 # 智能查询 NS 记录（优先使用 Google DNS API，失败则回退到 nslookup）
 # 参数: $1 - 域名
 # 输出格式:
-#   STATUS: registered|available
+#   DNS: records found|no records found|unknown
 #   NS: ns1.example.com
 #   NS: ns2.example.com
 __dns_query_ns_smart() {
@@ -63,17 +63,16 @@ __dns_query_ns_smart() {
             ns_records="$(__dns_google_extract_ns "$dns_response")"
 
             if [[ -n "$ns_records" ]]; then
-                echo "STATUS: registered"
+                echo "DNS: records found"
                 echo "$ns_records" | while read -r ns; do
                     [[ -n "$ns" ]] && echo "NS: $ns"
                 done
             else
-                echo "STATUS: registered (no nameservers configured)"
+                echo "DNS: records found (no nameservers configured)"
             fi
             return 0
         elif [[ "$dns_status" == "3" ]]; then
-            # 域名不存在
-            echo "STATUS: available"
+            echo "DNS: no records found"
             return 0
         fi
     fi
@@ -83,12 +82,12 @@ __dns_query_ns_smart() {
     ns_output="$(__dns_query_nslookup "$domain")"
 
     if [[ -n "$ns_output" ]]; then
-        echo "STATUS: registered"
+        echo "DNS: records found"
         echo "$ns_output" | while read -r ns; do
             [[ -n "$ns" ]] && echo "NS: $ns"
         done
     else
-        echo "STATUS: available"
+        echo "DNS: no records found"
     fi
 }
 
@@ -155,7 +154,7 @@ __dns_query_via_ns() {
     ns_output=$(nslookup -type=ns "$domain" "$ns_server" 2>/dev/null | grep -i "nameserver" | awk '{print $NF}')
 
     if [[ -n "$ns_output" ]]; then
-        echo "STATUS: registered (DNS records found)"
+        echo "DNS: records found"
         echo ""
         echo "Nameservers:"
         echo "$ns_output" | while read -r ns; do
@@ -167,9 +166,9 @@ __dns_query_via_ns() {
         check_result=$(nslookup "$domain" "$ns_server" 2>/dev/null | grep -i "NXDOMAIN")
 
         if [[ -n "$check_result" ]]; then
-            echo "STATUS: available (domain not found)"
+            echo "DNS: no records found"
         else
-            echo "STATUS: unknown (unable to determine)"
+            echo "DNS: unknown (unable to determine)"
         fi
     fi
 }

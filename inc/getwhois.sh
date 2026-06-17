@@ -6,6 +6,8 @@ if [[ -z "$WHOIS_WORKING_DIR" ]]; then
     WHOIS_WORKING_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
 fi
 
+source "$WHOIS_WORKING_DIR/inc/curl.sh"
+
 # 安全的参数解析
 while [[ $# -gt 0 && $1 =~ ^- ]]; do
     key="$1"
@@ -126,7 +128,10 @@ if [[ -z "$SERVER" ]]; then
     if [[ -z "$SERVER" ]]; then
         # 使用 URL 编码防止注入
         ENCODED_DOMAIN=$(__escape_url "$DOMAIN")
-        RESULT=$(__curl_get "https://www.iana.org/whois?q=${ENCODED_DOMAIN}")
+        if ! RESULT=$(__curl_get "https://www.iana.org/whois?q=${ENCODED_DOMAIN}"); then
+            echo "Error: Failed to query IANA whois service." >&2
+            exit 1
+        fi
         SERVER=$(echo "$RESULT" | grep "whois:" | sed 's#.* ##' | tr -d ' ')
 
         # 验证从 IANA 获取的服务器地址
@@ -164,7 +169,10 @@ if [[ -n "$SERVER" ]]; then
         # 使用 URL 编码防止注入
         ENCODED_DOMAIN=$(__escape_url "$DOMAIN")
         CURL_URL=${SERVER//%domain%/${ENCODED_DOMAIN}}
-        RESULT=$(__curl_get "$CURL_URL")
+        if ! RESULT=$(__curl_get "$CURL_URL"); then
+            echo "Error: Failed to query URL whois service." >&2
+            exit 1
+        fi
     else
         # 验证端口号
         if ! __validate_port "$PORT"; then
@@ -182,6 +190,7 @@ else
             echo "${TLD}=illigle" >> "$WHOIS_WORKING_DIR/data/servers.list" 2>/dev/null || true
         fi
         echo "Error: This domain TLD is not supported or illegal." >&2
+        exit 1
     else
         echo -e "This TLD has no whois server, but you can access the whois database at:\n${REG_URL}"
     fi
