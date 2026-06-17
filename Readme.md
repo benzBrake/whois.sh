@@ -63,6 +63,26 @@ echo '. ~/.whois.sh/whois.sh.env' >> ~/.bash_profile
 exec $SHELL
 ```
 
+### CA Certificates
+
+HTTPS requests use `data/cacert.pem`, which is downloaded automatically from curl.se and verified with the published sha256 checksum.
+
+The certificate cache is controlled by these environment variables:
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `WHOIS_CERT_EXPIRE_DAYS` | Refresh the cached CA bundle after this many days | `30` |
+| `WHOIS_CERT_CHECK_INTERVAL` | Minimum interval between CA bundle checks | `7` |
+| `WHOIS_CERT_INSECURE_BOOTSTRAP` | Set to `1` only when both the system CA store and existing `data/cacert.pem` are too old to verify curl.se | `false` |
+
+For old systems whose CA store cannot verify curl.se, run a one-time insecure bootstrap:
+
+```bash
+WHOIS_CERT_INSECURE_BOOTSTRAP=1 bash inc/curl.sh update
+```
+
+This disables TLS verification only for that bootstrap download attempt. The downloaded CA bundle is still checked against `cacert.pem.sha256`, and the script prints a warning. Update the system CA certificates and run without `WHOIS_CERT_INSECURE_BOOTSTRAP` after recovery.
+
 ### Basic Query
 
 ```bash

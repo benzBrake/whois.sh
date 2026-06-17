@@ -12,9 +12,10 @@ source "$WHOIS_WORKING_DIR/inc/functions.sh"
 __CURL_CERT_DIR="${WHOIS_WORKING_DIR}/data"
 __CURL_CERT_FILE="${__CURL_CERT_DIR}/cacert.pem"
 __CURL_CERT_VERSION_FILE="${__CURL_CERT_DIR}/cacert.version"
-__CURL_CERT_CHECK_FILE="${__CURL_CERT_DIR}/cacert.check"  # 上次检查时间
-__CURL_CERT_EXPIRE_DAYS=${WHOIS_CERT_EXPIRE_DAYS:-30}     # 证书过期天数（可通过环境变量配置）
-__CURL_CERT_CHECK_INTERVAL=${WHOIS_CERT_CHECK_INTERVAL:-7} # 检查间隔天数（默认 7 天）
+__CURL_CERT_CHECK_FILE="${__CURL_CERT_DIR}/cacert.check"
+__CURL_CERT_EXPIRE_DAYS=${WHOIS_CERT_EXPIRE_DAYS:-30}
+__CURL_CERT_CHECK_INTERVAL=${WHOIS_CERT_CHECK_INTERVAL:-7}
+__CURL_CERT_INSECURE_BOOTSTRAP=${WHOIS_CERT_INSECURE_BOOTSTRAP:-false}
 
 # CA 证书下载源
 __CURL_CERT_URL="https://curl.se/ca/cacert.pem"
@@ -124,51 +125,143 @@ __cert_needs_update() {
     return 1
 }
 
+# 下载远程文件，使用系统信任链；已有证书可作为额外兜底信任链。
+__cert_fetch_file() {
+    local url="$1"
+    local output="$2"
+    local fallback_cert="${3:-}"
+
+    local curl_args=(
+        -fsSL
+        --connect-timeout 10
+        --max-time 30
+        "$url"
+        -o "$output"
+    )
+
+    if curl "${curl_args[@]}" 2>/dev/null; then
+        return 0
+    fi
+
+    if [[ -n "$fallback_cert" && -s "$fallback_cert" ]]; then
+        curl_args=(
+            -fsSL
+            --cacert "$fallback_cert"
+            --connect-timeout 10
+            --max-time 30
+            "$url"
+            -o "$output"
+        )
+
+        if curl "${curl_args[@]}" 2>/dev/null; then
+            return 0
+        fi
+    fi
+
+    if command -v wget &>/dev/null; then
+        wget -q -O "$output" "$url" 2>/dev/null && return 0
+    fi
+
+    if [[ "$__CURL_CERT_INSECURE_BOOTSTRAP" == "1" || "$__CURL_CERT_INSECURE_BOOTSTRAP" == "true" ]]; then
+        curl_args=(
+            -fsSL
+            -k
+            --connect-timeout 10
+            --max-time 30
+            "$url"
+            -o "$output"
+        )
+
+        if curl "${curl_args[@]}" 2>/dev/null; then
+            __CURL_USED_INSECURE_BOOTSTRAP=1
+            return 0
+        fi
+    fi
+
+    return 1
+}
+
+# 计算文件 sha256
+__cert_sha256() {
+    local file="$1"
+
+    if command -v sha256sum &>/dev/null; then
+        sha256sum "$file" | awk '{print $1}'
+    elif command -v shasum &>/dev/null; then
+        shasum -a 256 "$file" | awk '{print $1}'
+    elif command -v openssl &>/dev/null; then
+        openssl dgst -sha256 "$file" | awk '{print $NF}'
+    else
+        return 1
+    fi
+}
+
+# 校验 CA 证书 sha256
+__cert_verify_hash() {
+    local cert_file="$1"
+    local hash_file="$2"
+    local expected_hash
+    local actual_hash
+
+    expected_hash=$(grep -oE '[0-9a-fA-F]{64}' "$hash_file" | head -1 | tr 'A-F' 'a-f')
+    if [[ -z "$expected_hash" ]]; then
+        return 1
+    fi
+
+    if ! actual_hash=$(__cert_sha256 "$cert_file"); then
+        return 1
+    fi
+
+    actual_hash=$(echo "$actual_hash" | tr 'A-F' 'a-f')
+    [[ "$actual_hash" == "$expected_hash" ]]
+}
+
 # 下载 CA 证书
 __cert_download() {
     local url="$1"
     local output="$2"
     local temp_output="${output}.tmp"
+    local temp_hash="${output}.sha256.tmp"
+    __CURL_USED_INSECURE_BOOTSTRAP=0
 
     # 创建临时目录
     mkdir -p "$(dirname "$temp_output")"
 
-    # 使用 curl 下载证书
-    # 如果系统 curl 不可用或没有证书，尝试使用不验证证书的方式
-    local curl_cmd="curl"
-    local curl_args=(-s -L)
-
-    # 检查是否需要跳过 SSL 验证（仅用于下载 CA 证书本身）
-    if [[ ! -f "$output" ]]; then
-        curl_args+=(-k)
+    if ! __cert_fetch_file "$url" "$temp_output" "$output"; then
+        rm -f "$temp_output" "$temp_hash"
+        return 1
     fi
 
-    curl_args+=("$url")
-    curl_args+=(-o "$temp_output")
-
-    if ! "$curl_cmd" "${curl_args[@]}" 2>/dev/null; then
-        # 备选方案：使用 wget
-        if command -v wget &>/dev/null; then
-            wget -q -O "$temp_output" "$url" 2>/dev/null || return 1
-        else
-            return 1
-        fi
+    if ! __cert_fetch_file "$__CURL_CERT_HASH_URL" "$temp_hash" "$output"; then
+        rm -f "$temp_output" "$temp_hash"
+        return 1
     fi
 
     # 验证下载的文件
     if [[ ! -s "$temp_output" ]]; then
-        rm -f "$temp_output"
+        rm -f "$temp_output" "$temp_hash"
         return 1
     fi
 
     # 验证是否为有效的 PEM 格式（简单检查）
     if ! grep -q "BEGIN CERTIFICATE" "$temp_output" 2>/dev/null; then
-        rm -f "$temp_output"
+        rm -f "$temp_output" "$temp_hash"
+        return 1
+    fi
+
+    if ! __cert_verify_hash "$temp_output" "$temp_hash"; then
+        rm -f "$temp_output" "$temp_hash"
         return 1
     fi
 
     # 原子替换
     mv "$temp_output" "$output"
+    rm -f "$temp_hash"
+
+    if [[ "$__CURL_USED_INSECURE_BOOTSTRAP" == "1" ]]; then
+        echo "Warning: CA certificate was bootstrapped without TLS verification." >&2
+        echo "Warning: Update system CA certificates and rerun without WHOIS_CERT_INSECURE_BOOTSTRAP." >&2
+    fi
 
     return 0
 }
@@ -235,6 +328,7 @@ __curl_get() {
     # 构建 curl 命令
     local curl_args=(
         -s
+        --fail
         --cacert "$__CURL_CERT_FILE"
         --connect-timeout 10
         --max-time 30
@@ -416,6 +510,8 @@ Commands:
 Environment Variables:
   WHOIS_CERT_EXPIRE_DAYS     Certificate expiry threshold in days (default: 30)
   WHOIS_CERT_CHECK_INTERVAL  Check interval in days (default: 7)
+  WHOIS_CERT_INSECURE_BOOTSTRAP
+                             Set to 1 only to recover from an outdated system CA
 EOF
             ;;
         *)
