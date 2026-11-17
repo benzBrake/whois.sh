@@ -327,7 +327,8 @@ iq=whois.cmc.iq
 # ir - Iran, Islamic Republic of
 ir=whois.nic.ir
 
-# is - Iceland (no whois server)
+# is - Iceland
+is=whois.isnic.is
 
 # it - Italy
 it=whois.nic.it
