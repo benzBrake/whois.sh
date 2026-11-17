@@ -56,8 +56,9 @@ if [[ -z "$SERVER" ]]; then
         exit 1
     fi
 
-    # 规范化域名
-    DOMAIN=$(echo "$DOMAIN" | sed "s/.$TLD//" | sed 's/.*\.//g').$TLD
+    # 按字面值移除末尾后缀，再提取域名标签，避免误删域名中间的字符
+    DOMAIN=${DOMAIN%."$TLD"}
+    DOMAIN="${DOMAIN##*.}.$TLD"
 
     # 优先从 RDAP 列表读取服务器（RDAP 协议优先）
     if [[ -f "$WHOIS_WORKING_DIR/data/rdap.list" ]]; then
